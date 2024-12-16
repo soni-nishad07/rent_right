@@ -22,7 +22,12 @@ $result_orders_last_month = mysqli_query($conn, $query_orders_last_month);
 $row_orders_last_month = mysqli_fetch_assoc($result_orders_last_month);
 $total_orders_last_month = $row_orders_last_month['total_orders'];
 
-// --------------------------Total revenue------------
+// Fetch revenue in the last month (assuming you have a revenue column or need to calculate)
+// $query_revenue_last_month = "SELECT SUM(amount) as total_revenue FROM payments WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 1 MONTH)";
+// $result_revenue_last_month = mysqli_query($conn, $query_revenue_last_month);
+// $row_revenue_last_month = mysqli_fetch_assoc($result_revenue_last_month);
+// $total_revenue_last_month = $row_revenue_last_month['total_revenue'];
+
 
 $query_total_paid_invoices = "
     SELECT SUM(total_amount) AS total_paid 
@@ -40,35 +45,19 @@ $row_total_paid_invoices = mysqli_fetch_assoc($result_total_paid_invoices);
 $total_paid_amount = $row_total_paid_invoices['total_paid'];
 
 
-// --------------------------TOP PRODUCTS----------
-
-// Search functionality
-$search_query = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+// ------------------------------
 
 
-// Query to get the top products based on order count in the last 5 days with search filter
+// Query to get the top products based on order count in the last 5 days
 $query_top_products = "
-    SELECT address, service_name, COUNT(*) AS order_count 
+    SELECT service_name, COUNT(*) AS order_count 
     FROM bookings 
     WHERE booking_date >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) 
-    AND service_name LIKE '%$search_query%'
     GROUP BY service_name 
     HAVING order_count > 0
     ORDER BY order_count DESC 
     LIMIT 5
 ";
-
-// Query to get the top products based on order count in the last 5 days
-
-// $query_top_products = "
-//     SELECT address , service_name, COUNT(*) AS order_count 
-//     FROM bookings 
-//     WHERE booking_date >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) 
-//     GROUP BY service_name 
-//     HAVING order_count > 0
-//     ORDER BY order_count DESC 
-//     LIMIT 5
-// ";
 
 // Execute the query
 $result_top_products = mysqli_query($conn, $query_top_products);
@@ -82,11 +71,10 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
 }
 
 
+// Close the database connection
+mysqli_close($conn);
 
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -96,7 +84,6 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Rent Right Bangalore</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <?php
     include('admin-link.php');
@@ -106,9 +93,9 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
 
 <body class="hold-transition sidebar-mini">
     <!--preloader-->
-    <!-- <div id="preloader">
+    <div id="preloader">
         <div id="status"></div>
-    </div> -->
+    </div>
     <!-- Site wrapper -->
     <div class="wrapper">
         <?php
@@ -127,14 +114,9 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
                     <h1>Overview</h1>
                     <small> <br /> </small>
                     <div class="searchbar">
-                        <form method="GET" action="" class="search-bar-home">
-                            <input class="form-control me-2" type="search" name="search"
-                                placeholder="Search by service name" aria-label="Search"
-                                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                            </form>
-                            <button type="button" class="btn-reset" onclick="resetSearch()">
-                                <i class="fa fa-refresh home_reset" aria-hidden="true"></i>
-                            </button>
+                        <form class="search-bar" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        </form>
                     </div>
                 </div>
             </section>
@@ -142,12 +124,10 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
             <!-- Main content -->
             <section class="content">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-7 col-md-6 col-lg-6">
-
-
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <div class="row-xs-12 row-sm-6 row-md-6 row-lg-6">
                             <div class="col">
-                                <div class="panel panel-bd panel-shadow">
+                                <div class="panel panel-bd lobidisable">
                                     <div class="panel-heading">
                                         <div class="panel-title">
                                             <h4>Check Detailed Analytics</h4>
@@ -155,22 +135,19 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
                                     </div>
                                     <div class="panel-body">
                                         <canvas id="barChart" height="150"></canvas>
+                                        <canvas id="singelBarChart" style="display:none"></canvas>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
-
-
                         <div class="row-xs-12 row-sm-6 row-md-6 row-lg-6">
                             <div class="col">
-                                <div class="panel panel-bd ">
+                                <div class="panel panel-bd lobidisable">
                                     <div class="panel-body">
                                         <div class="row">
-                                            <div class=" col-sm-12 col-lg-4  col-md-12">
+                                            <div class="col-sm-4">
                                                 <div class="row-sm-6">
-                                                    <div class="col product-name-boxs">
+                                                    <div class="col-sm-4 product-name-boxs">
                                                         <div id="cardbox1">
                                                             <div class="statistic-box">
                                                                 <h3>Customers</h3>
@@ -193,11 +170,13 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
                                                                 <div class="last">Total of Paid </div>
                                                             </div>
                                                         </div>
+
+
+
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <div class="col-sm-12 col-lg-8  col-md-12">
+                                            <div class="col-sm-8">
                                                 <div class="row">
                                                     <div class="col product-name">
                                                         <div class="panel panel-shadow panel-bd">
@@ -211,7 +190,7 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
                                                                     <div class="statistic-box">
                                                                         <h3><?php echo htmlspecialchars($product['service_name']); ?>
                                                                         </h3>
-                                                                        <h6><?php echo $product['address']; ?></h6>
+                                                                        <h4>Within the City</h4>
                                                                         <!-- Modify as needed -->
                                                                         <div class="last">
                                                                             <?php echo $product['order_count']; ?>
@@ -233,96 +212,57 @@ while ($row = mysqli_fetch_assoc($result_top_products)) {
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
-                    <div class="col-xs-12 col-sm-5 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                         <div class="row-xs-12 row-sm-6 row-md-6 row-lg-6">
                             <div class="col">
-                                <div class="panel panel-bd panel-shadow">
+                                <div class="panel panel-bd lobidisable">
                                     <div class="panel-heading">
                                         <div class="panel-title">
-                                            <h4>Order Received</h4>
+                                            <h4>Payment Received Monthly</h4>
                                         </div>
                                     </div>
                                     <div class="panel-body">
-
                                         <div class="row">
                                             <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2"></div>
                                             <div class="col-xs-5 col-sm-5 col-md-4 col-lg-4">
-                                                <h4 class="payment-heading"> Orders</h4>
-                                            </div>
-                                            <div class="col-xs-5 col-sm-5 col-md-4 col-lg-4">
-                                                <h4 class="payment-heading">Total Received</h4>
-                                            </div>
-                                        </div>
-                                        <?php
-                                    // Fetch data grouped by service_name
-                                    $sql = "SELECT service_name, COUNT(*) AS total_orders
-                                            FROM bookings 
-                                            GROUP BY service_name";
-                                    $result =mysqli_query(  $conn,$sql);
-
-                                    if ($result->num_rows > 0) {
-                                        while($row = $result->fetch_assoc()) {
-                                    ?>
-                                        <div class="row">
-                                            <div class="col-xs-1 col-sm-1 col-md-2 col-lg-2"></div>
-                                            <div class="col-xs-5 col-sm-5 col-md-4 col-lg-4">
+                                                <h4 class="payment-heading">Month</h4>
                                                 <div class="months">
-                                                    <p><?php echo $row['service_name']; ?></p>
+                                                    <p>January</p>
+                                                    <!-- Repeat for each month -->
                                                 </div>
                                             </div>
                                             <div class="col-xs-5 col-sm-5 col-md-4 col-lg-4">
-                                                <!-- <h4 class="payment-heading">Total Received</h4> -->
+                                                <h4 class="payment-heading">Total Payment</h4>
                                                 <div class="payment-recive">
-                                                    <p><?php echo number_format($row['total_orders']); ?></p>
+                                                    <p>₹400000</p>
+                                                    <!-- Repeat for each month -->
                                                 </div>
                                             </div>
+                                            <div class="colcol-xs-1 col-sm-1 col-md-2 col-lg-2"></div>
                                         </div>
-                                        <?php
-                                    }
-                                } else {
-                                    echo "<div class='no_record'>No records found.</div>";
-                                }
-                                
-                                // $mysqli->close();
-                                ?>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-
-
-
-
-
                 </div>
             </section>
         </div>
         <!-- /.content-wrapper -->
-
-                 
-         <!-- footer copyright -->
-        <?php
-include('copy.php');
-    ?>
-        
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2024 <a href="#">Rent-Right-Banglore</a>.</strong> All rights reserved.
+        </footer>
     </div>
 
-
-
+    <?php
+    include('footer-link.php');
+    ?>
 
     <script>
     document.getElementById('logoutButton').addEventListener('click', () => {
@@ -336,93 +276,56 @@ include('copy.php');
         window.location.href = '../login.php';
     });
 
-
-        // reset searxh
-        function resetSearch() {
-        document.querySelector('input[name="search"]').value = '';
-        document.querySelector('form.search-bar-home').submit();
-    }
-
-
-    </script>
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-$(document).ready(function () {
-    function chartlist() {
-        "use strict";
-
-        $.ajax({
-            url: 'fetch_data.php',
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                var months = [];
-                var totalOrders = [];
-                var completeOrders = [];
-
-                // Process the data
-                for (var i = 0; i < data.length; i++) {
-                    var monthIndex = data[i].month - 1; // Convert month number to zero-based index
-                    months.push(monthNames[monthIndex]); // Map to month name
-                    totalOrders.push(data[i].total_order);
-                    completeOrders.push(data[i].complete);
-                }
-
-                // Create the chart
-                var ctx = document.getElementById("barChart").getContext('2d');
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: months,
-                        datasets: [
-                            {
-                                label: "Total Orders",
-                                data: totalOrders,
-                                borderColor: "rgba(0, 150, 136, 0.76)",
-                                borderWidth: 1,
-                                backgroundColor: "rgba(0, 150, 136, 0.76)"
-                            },
-                            {
-                                label: "Completed Orders",
-                                data: completeOrders,
-                                borderColor: "rgba(255, 99, 132, 0.76)",
-                                borderWidth: 1,
-                                backgroundColor: "rgba(255, 99, 132, 0.76)"
-                            }
-                        ]
-                    },
-                    options: {
-                        scales: {
-                            x: {
-                                beginAtZero: true
-                            },
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: true
-                            }
-                        }
-                    }
-                });
+    function dash() {
+        // single bar chart
+        var ctx = document.getElementById("singelBarChart");
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Sun", "Mon", "Tu", "Wed", "Th", "Fri", "Sat"],
+                datasets: [{
+                    label: "My First dataset",
+                    data: [40, 55, 75, 81, 56, 55, 40],
+                    backgroundColor: [
+                        "rgba(22, 240, 149, 0.5)",
+                        "rgba(22, 240, 149, 0.5)",
+                        "rgba(22, 240, 149, 0.5)",
+                        "rgba(22, 240, 149, 0.5)",
+                        "rgba(22, 240, 149, 0.5)",
+                        "rgba(22, 240, 149, 0.5)",
+                        "rgba(22, 240, 149, 0.5)"
+                    ],
+                    borderColor: [
+                        "rgba(22, 240, 149, 1)",
+                        "rgba(22, 240, 149, 1)",
+                        "rgba(22, 240, 149, 1)",
+                        "rgba(22, 240, 149, 1)",
+                        "rgba(22, 240, 149, 1)",
+                        "rgba(22, 240, 149, 1)",
+                        "rgba(22, 240, 149, 1)"
+                    ],
+                    borderWidth: 1
+                }]
             },
-            error: function(xhr, status, error) {
-                console.error("An error occurred: " + status + " " + error);
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
         });
     }
-    chartlist();
-});
-</script>
-    <?php include('footer-link.php'); ?>
 
+    dash();
+    </script>
 
 </body>
 

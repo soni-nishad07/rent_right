@@ -114,26 +114,25 @@
     </div>
 </nav>
 
-
-<div class="container-fluid rent-head d-flex">
+<div class="container-fluid rent-head d-flex ">
     <!-- Rent Dropdown -->
     <div class="dropdown">
         <button class="btn btn-secondary1" type="button" onclick="window.location.href='index'">Rent</button>
         <button class="btn btn-secondary1 dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden"></span>
         </button>
-        <ul class="dropdown-menu" id="rent-dropdown">
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('1BHK')">1 BHK</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('2BHK')">2 BHK</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('3BHK')">3 BHK</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('4BHK')">4 BHK</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('5BHK')">5 BHK</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('1RK')">1 RK</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('CommercialSpace')">Commercial Space</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('Land')">Land</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('CompleteBuilding')">Complete Building</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('Bungalow')">Bungalow</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage('Villa')">Villa</button></li>
+        <ul class="dropdown-menu">
+            <li><button class="dropdown-item" type="button">1 BHK</button></li>
+            <li><button class="dropdown-item" type="button">2 BHK</button></li>
+            <li><button class="dropdown-item" type="button">3 BHK</button></li>
+            <li><button class="dropdown-item" type="button">4 BHK</button></li>
+            <li><button class="dropdown-item" type="button">5 BHK</button></li>
+            <li><button class="dropdown-item" type="button">1 RK</button></li>
+            <li><button class="dropdown-item" type="button">Commercial Space</button></li>
+            <li><button class="dropdown-item" type="button">Land</button></li>
+            <li><button class="dropdown-item" type="button">Complete Building</button></li>
+            <li><button class="dropdown-item" type="button">Bungalow</button></li>
+            <li><button class="dropdown-item" type="button">Villa</button></li>
         </ul>
     </div>
 
@@ -144,43 +143,28 @@
             <span class="visually-hidden"></span>
         </button>
         <ul class="dropdown-menu">
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Flat')">Flat</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Building')">Building</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Site')">Site</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Commercial')">Commercial</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Villa')">Villa</button></li>
+            <li><button class="dropdown-item" type="button">Flat</button></li>
+            <li><button class="dropdown-item" type="button">Building</button></li>
+            <li><button class="dropdown-item" type="button">Site</button></li>
+            <li><button class="dropdown-item" type="button">Commercial</button></li>
+            <li><button class="dropdown-item" type="button">Villa</button></li>
         </ul>
     </div>
 
     <!-- Sale Dropdown -->
     <div class="dropdown">
-        <button class="btn btn-secondary1" type="button" onclick="window.location.href='home1'">Commercial</button>
+        <button class="btn btn-secondary1" type="button" onclick="window.location.href='home1'">Sale</button>
         <button class="btn btn-secondary1 dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden"></span>
         </button>
         <ul class="dropdown-menu">
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Flat')">Flat</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Building')">Building</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Site')">Site</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Commercial')">Commercial</button></li>
-            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Villa')">Villa</button></li>
+            <li><button class="dropdown-item" type="button">Flat</button></li>
+            <li><button class="dropdown-item" type="button">Building</button></li>
+            <li><button class="dropdown-item" type="button">Site</button></li>
+            <li><button class="dropdown-item" type="button">Commercial</button></li>
+            <li><button class="dropdown-item" type="button">Villa</button></li>
         </ul>
     </div> 
-
-    <!-- JavaScript for Dynamic Redirection -->
-    <script>
-        // Redirect based on BHK Type for Rent
-        function redirectToPage(bhkType) {
-            const normalizedBHK = bhkType.replace(/\s+/g, '').toUpperCase(); // Normalize text
-            window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
-        }
-
-        // Redirect based on Property Type for Sale
-        function redirectToPage2(propertyType) {
-            const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase(); // Normalize text
-            window.location.href = `users/headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
-        }
-    </script>
 </div>
 
 
