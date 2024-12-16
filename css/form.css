@@ -1,0 +1,174 @@
+       /* Reset and Basic Styling */
+       * {
+           margin: 0;
+           padding: 0;
+           box-sizing: border-box;
+       }
+
+       /* Form Styling */
+       .post_container {
+           background: #fff;
+           padding: 20px 30px;
+           border-radius: 10px;
+           width: 100%;
+           margin: 60px auto;
+           /* max-width: 600px; */
+           max-width: 1000px;
+           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+       }
+
+       .post_container h2 {
+           text-align: center;
+           margin-bottom: 20px;
+           color: #333;
+
+           font-size: 30px;
+           font-weight: 600;
+       }
+
+       .form-section {
+           display: none;
+       }
+
+       .form-section.active {
+           display: block;
+       }
+
+       .form-control {
+           margin-bottom: 15px;
+           border: inherit !important;
+
+       }
+
+       .form-control label {
+           display: block;
+           margin-bottom: 5px;
+           color: #555;
+       }
+
+       .form-control input,
+       .form-control select {
+           width: 100%;
+           padding: 10px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+       }
+
+       .form-control input:focus,
+       .form-control select:focus {
+           border-color: #ff4e4e;
+       }
+
+       /* Navigation Buttons */
+       .navigation-buttons {
+           display: flex;
+           justify-content: space-between;
+           margin-top: 20px;
+       }
+
+       .navigation-buttons button {
+           padding: 10px 20px;
+           border: none;
+           background-color: #ff4e4e;
+           color: #fff;
+           border-radius: 5px;
+           cursor: pointer;
+       }
+
+       .navigation-buttons button[disabled] {
+           background-color: #ccc;
+           cursor: not-allowed;
+       }
+
+       /* Step Indicator */
+       .step-indicator {
+           display: flex;
+           justify-content: center;
+           margin-bottom: 20px;
+
+           background-color: rgba(255, 255, 255, 0.885);
+           margin-top: 50px !important;
+           text-align: center;
+           cursor: pointer;
+
+       }
+
+       .step-indicator div {
+           /* width: 30px; */
+           /* height: 30px; */
+           /* border-radius: 50%; */
+           /* margin: 0 5px; */
+           border: 1px solid #ccc; 
+           display: flex;
+           align-items: center;
+           justify-content: center;
+       }
+
+       .step-indicator .active {
+           /* background-color: #ff4e4e; */
+           border-bottom: 6px solid #ff4e4e;
+         color: #333;
+           /* 
+           padding: 26px;
+           box-shadow: 0px 0px 2px 2px #e4e4e4;
+           border: 1px solid #ccc; */
+       }
+
+       .error {
+           color: red !important;
+       }
+
+
+       .upload_img {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 500px;
+        padding: 60px;
+        height: 200px;
+        margin: 50px auto;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        background-color: #f4f4f4;
+        text-align: center;
+    }
+
+
+
+
+    input.location {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ababab;
+        color: gray;
+        width: 300px;
+        width: 100% !important ;
+    }
+
+
+
+/* ---------------fom placeholder colors ---------- */
+    .post_container .form-control input::placeholder {
+        color: #888; 
+    }
+
+    .post_container.form-control input , .post_container    .form-control input:focus {
+        color: #000; 
+        background-color: #fff; 
+    }
+
+
+
+/* .error {
+    color: red;
+    font-size: 12px;
+    display: block;
+    margin-top: 5px; 
+} */
+
+
+.steps .step.complete {
+    border-bottom: 6px solid #6ECBA4;
+}

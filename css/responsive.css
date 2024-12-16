@@ -1,0 +1,275 @@
+[type="search"] {
+  outline-offset: -2px;
+  -webkit-appearance: textfield;
+  color: #281313 !important;
+  font-weight: 600 !important;
+}
+
+.approved {
+  font-weight: 600;
+}
+
+/* ----------------------------------------------- */
+
+.view-more-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #5cb85c;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.view-more-btn:hover {
+  background-color: #4cae4c;
+}
+
+/* -----------------------------footer -------------------- */
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px 0;
+}
+
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.footer-logo img {
+  max-width: 150px; /* Adjust the size as needed */
+  height: auto;
+  padding: 15px 0px;
+}
+
+.footer-links {
+  margin: 20px 0;
+}
+
+.footer-links ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer-links li {
+  display: inline;
+  margin: 0 15px;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer-copy {
+  margin-top: 10px;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+  .footer-container {
+    flex-direction: column;
+  }
+
+  .footer-links li {
+    display: block;
+    margin: 5px 0;
+  }
+}
+
+/*----------------------------------- header css start---------------------------- */
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  /* background-color: #fff; */
+}
+
+.logo {
+  flex: 1 1 20%; /* Flex-grow: 1, flex-shrink: 1, flex-basis: 20% */
+}
+
+.logo img {
+  height: 80px;
+  max-width: 100%;
+  align-items: center;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  flex: 1 1 45%; 
+  padding: 10px;
+  border: 2px solid #575757;
+  border-radius: 20px;
+}
+
+.menu {
+  flex: 1 1 20%;
+  margin-top: 15px !important;
+  text-align: center;
+}
+
+.menu a {
+  color: red !important;
+  text-decoration: none;
+  padding: 0px 20px;
+  border: 1px solid rgb(242, 26, 26);
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.menu a:hover {
+  color: red;
+}
+
+.login-header {
+  flex: 1 1 15%;
+  text-align: right;
+}
+
+.login-btn {
+  width: 150px;
+  font-size: 14px;
+  padding: 8px 20px;
+  border: 1px solid #575757;
+  border-radius: 50px;
+  background-color: #575757;
+  cursor: pointer;
+  color: white !important;
+  font-family: "Times New Roman", Times, serif;
+  text-align: center;
+}
+
+/* Responsive Design */
+
+@media (max-width: 1400px) {
+  .logo {
+    flex: 1 1 15%;
+  }
+
+  .menu {
+    flex: 1 1 20%;
+    margin-top: 15px !important;
+    text-align: center;
+  }
+
+  .login-header {
+    flex: 1 1 15%;
+    text-align: right;
+  }
+
+  .search-bar {
+    width: 80%; 
+    margin: 0 auto;
+  }
+
+  .login-btn {
+    /* width: 100px;  */
+  }
+}
+
+@media (max-width: 992px) {
+  .logo,
+  .search-bar,
+  .menu,
+  .login-header {
+    flex: 1 1 100%;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .search-bar {
+    width: 80%; 
+    margin: 0 auto;
+  }
+
+  .login-btn {
+    width: 100%;
+    margin: auto;
+  }
+
+  .brdcrum {
+    text-align: center;
+    color: black;
+    position: relative;
+    top: 40%;
+    font-weight: 600;
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 10px;
+  }
+
+  .search-bar {
+    width: 90%;
+  }
+
+  .menu a {
+    font-size: 14px;
+    padding: 6px 15px;
+  }
+
+  .login-btn {
+    width: auto;
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+
+  .brdcrum {
+    text-align: center;
+    color: black;
+    position: relative;
+    top: 40%;
+    font-weight: 600;
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .search-bar,
+  .logo,
+  .menu,
+  .login-header {
+    flex: 1 1 100%;
+    margin-bottom: 10px;
+  }
+
+  .menu a {
+    display: block;
+    margin: 5px 0;
+  }
+
+  .login-btn {
+    width: 100%;
+  }
+
+  .brdcrum {
+    text-align: center;
+    color: black;
+    position: relative;
+    top: 40%;
+    font-weight: 600;
+    font-size: 30px;
+  }
+}
