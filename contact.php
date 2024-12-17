@@ -2,7 +2,7 @@
 session_start();
 include('connection.php');
 
-$is_logged_in = isset($_SESSION['user_id']); 
+$is_logged_in = isset($_SESSION['user_id']);
 ?>
 
 
@@ -28,52 +28,54 @@ $is_logged_in = isset($_SESSION['user_id']);
 
 
 
-        <?php 
-            include('head.php');
-        ?>
+    <?php
+    include('head.php');
+    ?>
 
 
 
-<header class="header"  style="background: url('img/home2.png') center/cover no-repeat;">
-         <h2 class="brdcrum">Contact us</h2>
+    <header class="header" style="background: url('img/home2.png') center/cover no-repeat;">
+        <h2 class="brdcrum">Contact us</h2>
     </header>
 
 
 
 
-    
-<section class="contact-section">
+
+    <section class="contact-section">
         <div class="container">
             <h2>Get In Touch With Us & Send Us Messages</h2>
             <div class="contact-container">
-                <form class="contact-form"  action="https://formsubmit.co/"  method="POST" onsubmit="showSuccessMessage(event)">
-                    <input type="text" placeholder="Your Name" required>
-                    <input type="email" placeholder="Your Email" required>
-                    <input type="text" placeholder="Mobile number" required>
-                    <textarea placeholder="Your Message" required></textarea>
-                    <input type="hidden" name="_captcha" value="false">
-                    <input type="hidden" name="_template" value="table">
+
+                <!-- <form class="contact-form"  action="https://formsubmit.co/"  method="POST" onsubmit="showSuccessMessage(event)"> -->
+
+                <form class="contact-form" action="save_contact.php" method="POST">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <input type="text" name="mobile" placeholder="Mobile number" required>
+                    <textarea name="message" placeholder="Your Message" required></textarea>
+                    <!-- <input type="hidden" name="_captcha" value="false"> -->
+                    <!-- <input type="hidden" name="_template" value="table"> -->
                     <button type="submit">Send Message</button>
                 </form>
+                
                 <div class="contact-info">
                     <p><strong>Address</strong></p>
                     <p>
-                    <a href="tel:+919538865407">
-                        <i class="fas fa-phone"></i> +91-9538865407
-                </a>
+                        <a href="tel:+919538865407">
+                            <i class="fas fa-phone"></i> +91-9538865407
+                        </a>
                     </p>
-                    <!-- <p>
-                    <a  href="mailto:" >
-                    <i class="fas fa-envelope"></i> abc@gmail.com
-                </a>
-                    </p> -->
-               
 
-                    <p><i class="fas fa-map-marker-alt"></i> No.138, 20th Main Road, 
-                    7th Cross, BTM 2nd Stage, <br> 
-                    <span style="padding-left :25px">
-                        Bangalore, 560076.
-                    </span>
+                    <!-- <p><a  href="mailto:" >
+                    <i class="fas fa-envelope"></i> abc@gmail.com
+                     </a></p>  -->
+
+                    <p><i class="fas fa-map-marker-alt"></i> No.138, 20th Main Road,
+                        7th Cross, BTM 2nd Stage, <br>
+                        <span style="padding-left :25px">
+                            Bangalore, 560076.
+                        </span>
                     </p>
                 </div>
             </div>
@@ -82,10 +84,9 @@ $is_logged_in = isset($_SESSION['user_id']);
 
 
 
-        <!-- footer start  -->
-        <?php include('footer.php'); ?>
+    <!-- footer start  -->
+    <?php include('footer.php'); ?>
 
-       <script src="js/script.js"></script>
+    <script src="js/script.js"></script>
 
-    </body>
-
+</body>
