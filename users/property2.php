@@ -2,7 +2,15 @@
 session_start();
 include('../connection.php');
 
-$is_logged_in = isset($_SESSION['user_id']); // Adjust this condition based on your actual session variable for logged-in users
+// Check if user is logged in (Adjust this according to your session setup)
+$is_logged_in = isset($_SESSION['user_id']);
+
+// Function to sanitize user input (you can extend this as needed)
+function sanitize($data)
+{
+    global $conn; // Use the connection object in sanitize
+    return mysqli_real_escape_string($conn, trim($data));
+}
 
 // Handle search request
 $location = '';
@@ -13,59 +21,120 @@ $priceRange = '';
 $furnishing = '';
 $propertyType = '';
 
+// Sanitize and assign user input if it exists
 if (isset($_POST['area']) && !empty($_POST['area'])) {
-    $location = $_POST['area'];
+    $location = sanitize($_POST['area']);
 }
 
 if (isset($_POST['city']) && !empty($_POST['city'])) {
-    $city = $_POST['city'];
-}
-if (isset($_POST['state']) && !empty($_POST['state'])) {
-    $state = $_POST['state'];
+    $city = sanitize($_POST['city']);
 }
 
+if (isset($_POST['state']) && !empty($_POST['state'])) {
+    $state = sanitize($_POST['state']);
+}
 
 if (isset($_POST['bhk_type']) && !empty($_POST['bhk_type'])) {
-    $bhkType = $_POST['bhk_type'];
-}
-if (isset($_POST['price_range']) && !empty($_POST['price_range'])) {
-    $priceRange = $_POST['price_range'];
-}
-if (isset($_POST['furnishing']) && !empty($_POST['furnishing'])) {
-    $furnishing = $_POST['furnishing'];
-}
-if (isset($_POST['property_type']) && !empty($_POST['property_type'])) {
-    $propertyType = $_POST['property_type'];
+    $bhkType = sanitize($_POST['bhk_type']);
 }
 
+
+
+if (isset($_POST['expected_rent']) && !empty($_POST['expected_rent'])) {
+    // Remove commas and sanitize the input
+    $priceRange = sanitize(str_replace(',', '', $_POST['expected_rent']));
+}
+
+// if (isset($_POST['expected_deposit']) && !empty($_POST['expected_deposit'])) {
+//     // Remove commas and sanitize the input
+//     $priceRange = sanitize(str_replace(',', '', $_POST['expected_deposit']));
+// }
+
+if (isset($_POST['furnishing']) && !empty($_POST['furnishing'])) {
+    $furnishing = sanitize($_POST['furnishing']);
+}
+
+if (isset($_POST['property_type']) && !empty($_POST['property_type'])) {
+    $propertyType = sanitize($_POST['property_type']);
+}
+
+// Start building the query
 $query = "SELECT * FROM properties WHERE 1=1";
 
+// Add filters to the query if the parameters are set
 if (!empty($location)) {
     $query .= " AND area LIKE '%$location%'";
 }
+
 if (!empty($city)) {
     $query .= " AND city LIKE '%$city%'";
 }
+
 if (!empty($state)) {
     $query .= " AND state LIKE '%$state%'";
 }
+
 if (!empty($bhkType)) {
-    // Modify the query to match both '1bhk' and '1 bhk'
     $query .= " AND REPLACE(bhk_type, ' ', '') = REPLACE('$bhkType', ' ', '')";
 }
+
+
+// Handle price range for expected_deposit and expected_rent
+// if (!empty($priceRange)) {
+//     $priceParts = explode(' - ', $priceRange); // Split into min and max values
+//     if (count($priceParts) == 2) {
+//         // Price range for deposit
+//         $minPrice = intval($priceParts[0]);
+//         $maxPrice = intval($priceParts[1]);
+//         $query .= " AND (expected_deposit BETWEEN $minPrice AND $maxPrice OR expected_rent BETWEEN $minPrice AND $maxPrice)";
+//     } else {
+//         // Single value for deposit and rent
+//         $priceRange = intval($priceRange); // Sanitize and convert to integer
+//         $query .= " AND (expected_deposit = $priceRange OR expected_rent = $priceRange)";
+//     }
+// }
+
+
+// Check if priceRange is a range (e.g., "1000 - 5000")
 if (!empty($priceRange)) {
-    list($minPrice, $maxPrice) = explode('-', $priceRange);
-    $query .= " AND expected_deposit BETWEEN $minPrice AND $maxPrice";
+    $priceParts = explode(' - ', $priceRange); // Split the price range into min and max values
+    if (count($priceParts) == 2) {
+        $minPrice = intval($priceParts[0]);
+        $maxPrice = intval($priceParts[1]);
+        $query .= " AND expected_rent BETWEEN $minPrice AND $maxPrice"; // Compare with a range using BETWEEN
+    } else {
+        // If priceRange is a single value, compare it directly with expected_rent
+        $query .= " AND expected_rent = $priceRange";
+    }
 }
+
+
+
 if (!empty($furnishing)) {
     $query .= " AND furnishing='$furnishing'";
 }
+
 if (!empty($propertyType)) {
     $query .= " AND property_type='$propertyType'";
 }
 
+// Execute the query
 $result = mysqli_query($conn, $query);
+
+// Check if there are results
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        // Process your results here
+    }
+} else {
+    echo "Error: " . mysqli_error($conn);
+}
+
 ?>
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -144,11 +213,64 @@ $result = mysqli_query($conn, $query);
         google.maps.event.addDomListener(window, 'load', initAutocomplete);
     </script>
 
+    <style>
+        /* -----------popup modal img--------- */
+
+        .modal {
+            position: fixed;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .carousel-item.active img.pop_img {
+            /* height: 80vh !important;  */
+            height: 100% !important;
+            object-fit: cover;
+        }
+    </style>
+
 </head>
+
+
 
 <body>
 
+
+
+
+
     <?php include('user-head.php');  ?>
+
+
+    <?php
+
+    // Fetch distinct BHK types from the category table
+    $bhk_query = "SELECT DISTINCT bhk_type FROM category WHERE bhk_type IS NOT NULL ORDER BY bhk_type";
+    $bhk_result = $conn->query($bhk_query);
+
+
+    // Fetch expected rent ranges
+    $expected_rent_query = "SELECT DISTINCT expected_rent_from, expected_rent_to FROM category WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL ORDER BY expected_rent_from";
+    $expected_rent_result = $conn->query($expected_rent_query);
+
+    // Fetch commercial rent ranges
+    $commercial_rent_query = "SELECT DISTINCT commercial_rent_from, commercial_rent_to FROM category WHERE property_choose LIKE '%Commercial%'";
+    $commercial_rent_result = $conn->query($commercial_rent_query);
+
+    // Fetch deposit ranges
+    $deposit_query = "SELECT DISTINCT expected_deposit_from, expected_deposit_to FROM category WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL";
+    $deposit_result = $conn->query($deposit_query);
+
+    // Fetch property types (both residential and commercial)
+    $property_type_query = "SELECT DISTINCT property_type FROM category WHERE property_type IS NOT NULL";
+    $property_type_result = $conn->query($property_type_query);
+
+
+    ?>
+
 
 
     <div class="overlay" id="overlay"></div>
@@ -161,46 +283,56 @@ $result = mysqli_query($conn, $query);
                         <label for="Rent">Rent</label>
 
                         <select id="bhk_type" name="bhk_type">
-                            <option value="">BHK Type</option>
-                            <option value="1 BHK" <?php echo $bhkType == '1 BHK' ? 'selected' : ''; ?>>1 BHK</option>
-                            <option value="2 BHK" <?php echo $bhkType == '2 BHK' ? 'selected' : ''; ?>>2 BHK</option>
-                            <option value="3 BHK" <?php echo $bhkType == '3 BHK' ? 'selected' : ''; ?>>3 BHK</option>
-                            <option value="4 BHK" <?php echo $bhkType == '4 BHK' ? 'selected' : ''; ?>>4 BHK</option>
-                            <option value="5 BHK" <?php echo $bhkType == '5 BHK' ? 'selected' : ''; ?>>5 BHK</option>
-
-                            <option value="Independent House"
-                                <?php echo $bhkType == 'Independent House' ? 'selected' : ''; ?>>Independent House
-                            </option>
-
-
-                            <option value="1RK" <?php echo $bhkType == '1RK' ? 'selected' : ''; ?>>1 RK</option>
-                            <option value="CommercialSpace" <?php echo $bhkType == 'CommercialSpace' ? 'selected' : ''; ?>>Commercial Space</option>
-                            <option value="Land" <?php echo $bhkType == 'Land' ? 'selected' : ''; ?>>Land</option>
-                            <option value="CompleteBuilding" <?php echo $bhkType == 'CompleteBuilding' ? 'selected' : ''; ?>>Complete Building</option>
-                            <option value="Bungalow" <?php echo $bhkType == 'Bungalow' ? 'selected' : ''; ?>>Bungalow</option>
-                            <option value="Villa" <?php echo $bhkType == 'Villa' ? 'selected' : ''; ?>>Villa</option>
-
-
+                            <option value="">Select BHK Type</option>
+                            <?php
+                            if ($bhk_result->num_rows > 0) {
+                                while ($row = $bhk_result->fetch_assoc()) {
+                                    echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
+                                }
+                            } else {
+                                echo "<option value=''>No BHK Types Available</option>";
+                            }
+                            ?>
                         </select>
 
 
-                        <select id="price_range" name="price_range">
-                            <option value="">Price Range</option>
-                            <option value="5000-10000" <?php echo $priceRange == '5000-10000' ? 'selected' : ''; ?>>5,000 - 10,000</option>
-                            <option value="10000-30000" <?php echo $priceRange == '10000-30000' ? 'selected' : ''; ?>>10,000 - 30,000</option>
-                            <option value="30000-50000" <?php echo $priceRange == '30000-50000' ? 'selected' : ''; ?>>30,000 - 50,000</option>
-                            <option value="50000-100000" <?php echo $priceRange == '50000-100000' ? 'selected' : ''; ?>>50,000 - 100,000</option>
-                            <option value="100000-150000" <?php echo $priceRange == '100000-150000' ? 'selected' : ''; ?>>100,000 - 150,000</option>
-                            <option value="150000-200000" <?php echo $priceRange == '150000-200000' ? 'selected' : ''; ?>>150,000 - 200,000</option>
-                            <option value="200000-250000" <?php echo $priceRange == '200000-250000' ? 'selected' : ''; ?>>200,000 - 250,000</option>
-                            <option value="250000-300000" <?php echo $priceRange == '250000-300000' ? 'selected' : ''; ?>>250,000 - 300,000</option>
-                            <option value="300000-350000" <?php echo $priceRange == '300000-350000' ? 'selected' : ''; ?>>300,000 - 350,000</option>
-                            <option value="350000-400000" <?php echo $priceRange == '350000-400000' ? 'selected' : ''; ?>>350,000 - 400,000</option>
-                            <option value="400000-450000" <?php echo $priceRange == '400000-450000' ? 'selected' : ''; ?>>400,000 - 450,000</option>
-                            <option value="450000-480000" <?php echo $priceRange == '450000-480000' ? 'selected' : ''; ?>>450,000 - 480,000</option>
-                            <option value="480000-500000" <?php echo $priceRange == '480000-500000' ? 'selected' : ''; ?>>480,000 - 500,000</option>
-                            <option value="500000-above" <?php echo $priceRange == '500000-above' ? 'selected' : ''; ?>>500,000 and Above</option>
+                        <!-- Price Range Dropdown -->
+                        <select id="price_range" name="expected_rent">
+                            <option value="">Select Price Range</option>
+                            <?php
+                            if ($expected_rent_result->num_rows > 0) {
+                                while ($row = $expected_rent_result->fetch_assoc()) {
+                                    $expected_rent_range = number_format($row['expected_rent_from']) . " - " . number_format($row['expected_rent_to']);
+                                    echo "<option value='" . htmlspecialchars($expected_rent_range) . "'>" . htmlspecialchars($expected_rent_range) . "</option>";
+                                }
+                            }
+
+                            // Commercial Rent Range
+                            if ($commercial_rent_result->num_rows > 0) {
+                                while ($row = $commercial_rent_result->fetch_assoc()) {
+                                    $commercial_rent_range = number_format($row['commercial_rent_from']) . " - " . number_format($row['commercial_rent_to']);
+                                    echo "<option value='" . htmlspecialchars($commercial_rent_range) . "'>" . htmlspecialchars($commercial_rent_range) . "</option>";
+                                }
+                            }
+
+                            // Deposit Range
+                            if ($deposit_result->num_rows > 0) {
+                                while ($row = $deposit_result->fetch_assoc()) {
+                                    $deposit_range = number_format($row['expected_deposit_from']) . " - " . number_format($row['expected_deposit_to']);
+                                    echo "<option value='" . htmlspecialchars($deposit_range) . "'>" . htmlspecialchars($deposit_range) . "</option>";
+                                }
+                            }
+
+                            // If no ranges found, display a default message
+                            if ($expected_rent_result->num_rows == 0 && $commercial_rent_result->num_rows == 0 && $deposit_result->num_rows == 0) {
+                                echo "<option value=''>No Price Ranges Available</option>";
+                            }
+                            ?>
                         </select>
+
+
+
+
 
                         <select id="furnishing" name="furnishing">
                             <option value="">Select Furnishing</option>
@@ -216,16 +348,29 @@ $result = mysqli_query($conn, $query);
                         </select>
 
                         <select id="property_type" name="property_type">
-                            <option value="">Property Type</option>
-                            <option value="Flat" <?php echo $propertyType == 'Flat' ? 'selected' : ''; ?>>Flat</option>
-                            <option value="Building" <?php echo $propertyType == 'Building' ? 'selected' : ''; ?>>
-                                Building
-                            </option>
-                            <option value="Site" <?php echo $propertyType == 'Site' ? 'selected' : ''; ?>>Site</option>
-                            <option value="Commercial" <?php echo $propertyType == 'Commercial' ? 'selected' : ''; ?>>
-                                Commercial</option>
-                            <option value="Villa" <?php echo $propertyType == 'Villa' ? 'selected' : ''; ?>>Villa
-                            </option>
+                            <option value="">Select Property Type</option>
+                            <?php
+                            // Display all property types (both residential and commercial)
+
+                            // Residential Property Types
+                            if ($property_type_result->num_rows > 0) {
+                                while ($row = $property_type_result->fetch_assoc()) {
+                                    echo "<option value='" . htmlspecialchars($row['property_type']) . "'>" . htmlspecialchars($row['property_type']) . "</option>";
+                                }
+                            }
+
+                            // Commercial Property Types
+                            if ($commercial_property_type_result->num_rows > 0) {
+                                while ($row = $commercial_property_type_result->fetch_assoc()) {
+                                    echo "<option value='" . htmlspecialchars($row['commercial_property_type']) . "'>" . htmlspecialchars($row['commercial_property_type']) . "</option>";
+                                }
+                            }
+
+                            // If no property types found, display a default message
+                            if ($property_type_result->num_rows == 0 && $commercial_property_type_result->num_rows == 0) {
+                                echo "<option value=''>No Property Types Available</option>";
+                            }
+                            ?>
                         </select>
 
                         <button type="submit" class="btn">Search</button>
@@ -552,12 +697,28 @@ $result = mysqli_query($conn, $query);
                 </form>
             </div>
 
-            <div class="location-btn">
+            <!-- <div class="location-btn">
                 <a class="saved-property" href="<?php echo $is_logged_in ? 'save.php' : '#'; ?>" onclick="<?php echo $is_logged_in ? '' : 'showPopup(); return false;'; ?>">
                     Saved Properties<i class="fas fa-heart" style="color: red; padding-left: 5px;"></i>
                 </a>
-            </div>
+            </div> -->
         </section>
+
+
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-sm-12 text-center">
+
+                    <div class="location-btn">
+                        <a class="saved-property" href="<?php echo $is_logged_in ? 'save.php' : '#'; ?>" onclick="<?php echo $is_logged_in ? '' : 'showPopup(); return false;'; ?>">
+                            Saved Properties<i class="fas fa-heart" style="color: red; padding-left: 5px;"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
 
         <?php
@@ -570,7 +731,7 @@ $result = mysqli_query($conn, $query);
         $state = isset($_POST['state']) ? $_POST['state'] : '';
 
         $bhkType = isset($_POST['bhk_type']) ? $_POST['bhk_type'] : '';
-        $priceRange = isset($_POST['price_range']) ? $_POST['price_range'] : '';
+        $priceRange = isset($_POST['expected_rent']) ? $_POST['expected_rent'] : '';
         $furnishing = isset($_POST['furnishing']) ? $_POST['furnishing'] : '';
         $propertyType = isset($_POST['property_type']) ? $_POST['property_type'] : '';
 
@@ -707,7 +868,7 @@ $result = mysqli_query($conn, $query);
                             <div class="card property-box mb-3">
                                 <div class="row g-0">
                                     <div class="col-md-12 col-lg-4 col-sm-12 property-image">
-                                        <div class='image-placeholder'>
+                                        <div class='image-placeholder' onclick="openImagePopup(<?php echo $row['id']; ?>)">
                                             <?php if (count($images) > 0) { ?>
                                                 <div id="propertySlider<?php echo $row['id']; ?>" class="carousel slide"
                                                     data-bs-ride="carousel">
@@ -789,6 +950,41 @@ $result = mysqli_query($conn, $query);
                             </div>
                         </div>
                     </div>
+
+                    <!-- Popup Modal -->
+                    <div class="modal fade" id="imagePopup<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="imagePopupLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Property Images</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="popupCarousel<?php echo $row['id']; ?>" class="carousel slide" data-bs-ride="carousel">
+                                        <div class="carousel-inner">
+                                            <?php
+                                            foreach ($images as $index => $image) {
+                                                $active = $index == 0 ? 'active' : '';
+                                                echo "<div class='carousel-item $active'>
+                                            <img src='$image' class='d-block w-100  pop_img' alt='Property Image'>
+                                        </div>";
+                                            }
+                                            ?>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#popupCarousel<?php echo $row['id']; ?>" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#popupCarousel<?php echo $row['id']; ?>" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
             <?php
                 }
             } else {
@@ -800,6 +996,23 @@ $result = mysqli_query($conn, $query);
         <?php
         mysqli_close($conn);
         ?>
+
+
+
+
+        <script>
+            function openImagePopup(propertyId) {
+                const modalId = `#imagePopup${propertyId}`;
+                const modal = new bootstrap.Modal(document.querySelector(modalId));
+                modal.show();
+            }
+        </script>
+
+
+
+
+
+        <!-- ----------recommeded properties----------- -->
 
         <?php
         include('../connection.php');
@@ -813,7 +1026,7 @@ $result = mysqli_query($conn, $query);
 
 
         $bhkType = isset($_POST['bhk_type']) ? $_POST['bhk_type'] : '';
-        $priceRange = isset($_POST['price_range']) ? $_POST['price_range'] : '';
+        $priceRange = isset($_POST['expected_rent']) ? $_POST['expected_rent'] : '';
         $furnishing = isset($_POST['furnishing']) ? $_POST['furnishing'] : '';
         $propertyType = isset($_POST['property_type']) ? $_POST['property_type'] : '';
 
@@ -846,7 +1059,7 @@ $result = mysqli_query($conn, $query);
         }
         if (!empty($priceRange)) {
             list($minPrice, $maxPrice) = explode('-', $priceRange);
-            $where_clauses[] = "expected_deposit BETWEEN " . (float)$minPrice . " AND " . (float)$maxPrice;
+            $where_clauses[] = "expected_rent  BETWEEN " . (float)$minPrice . " AND " . (float)$maxPrice;
         }
         if (!empty($furnishing)) {
             $where_clauses[] = "furnishing='" . mysqli_real_escape_string($conn, $furnishing) . "'";
@@ -1206,11 +1419,11 @@ $result = mysqli_query($conn, $query);
                     <div class="input-group-custom">
                         <input type="number" id="mobile_custom" name="mobile" placeholder="Mobile Number" required>
                     </div>
-                    <div class="input-group-custom">
+                    <!-- <div class="input-group-custom">
                         <input type="date" id="booking_date_custom" name="booking_date" required>
-                    </div>
+                    </div> -->
                     <div class="input-group-custom">
-                        <span>Provide Date For Booking!</span>
+                        <!-- <span>Provide Date For Booking!</span> -->
                     </div>
                     <button type="submit" name="book-services" class="book-services-custom">Schedule a Visit</button>
                 </form>
@@ -1260,8 +1473,9 @@ $result = mysqli_query($conn, $query);
                 var name = document.getElementById("name_custom").value;
                 var email = document.getElementById("email_custom").value;
                 var mobile = document.getElementById("mobile_custom").value;
-                var date = document.getElementById("booking_date_custom").value;
-                if (name == "" || email == "" || mobile == "" || date == "") {
+                // var date = document.getElementById("booking_date_custom").value;
+
+                if (name == "" || email == "" || mobile == "") {
                     alert("All fields must be filled out");
                     return false;
                 }

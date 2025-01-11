@@ -815,7 +815,7 @@ mysqli_close($conn);
                         <input type="date" id="booking_date_custom" name="booking_date" required>
                     </div>
                     <div class="input-group-custom">
-                        <span>Provide Date For Booking!</span>
+                        <!-- <span>Provide Date For Booking!</span> -->
                     </div>
                     <button type="submit" name="book-services" class="book-services-custom">Book Now</button>
                 </form>

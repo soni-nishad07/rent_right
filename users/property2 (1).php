@@ -1025,19 +1025,22 @@ mysqli_close($conn);
                         <textarea name="address" rows="3" cols="100" id="address_custom" placeholder="Enter Address"
                             required></textarea>
                     </div>
-                    <div class="input-group-custom">
+                    
+                    <!-- Add more payment options here if needed -->
+                     
+                    <!-- <div class="input-group-custom">
                         <select class="form-select-custom" aria-label="Default select" id="payment_mode_custom"
                             name="payment_mode" required>
                             <option value="" disabled selected>----Select Payment Mode---</option>
                             <option value="cash">Cash</option>
-                            <!-- Add more payment options here if needed -->
                         </select>
-                    </div>
-                    <div class="input-group-custom">
+                    </div> -->
+
+                    <!-- <div class="input-group-custom">
                         <input type="date" id="booking_date_custom" name="booking_date" required>
-                    </div>
+                    </div> -->
                     <div class="input-group-custom">
-                        <span>Provide Date For Booking!</span>
+                        <!-- <span>Provide Date For Booking!</span> -->
                     </div>
                     <button type="submit" name="book-services" class="book-services-custom">Book Now</button>
                 </form>
@@ -1088,9 +1091,9 @@ mysqli_close($conn);
             var email = document.getElementById("email_custom").value;
             var mobile = document.getElementById("mobile_custom").value;
             var address = document.getElementById("address_custom").value;
-            var paymentMode = document.getElementById("payment_mode_custom").value;
-            var date = document.getElementById("booking_date_custom").value;
-            if (name == "" || email == "" || mobile == "" || address == "" || paymentMode == "" || date == "") {
+            // var paymentMode = document.getElementById("payment_mode_custom").value;
+            // var date = document.getElementById("booking_date_custom").value;
+            if (name == "" || email == "" || mobile == "" || address == "" ) {
                 alert("All fields must be filled out");
                 return false;
             }

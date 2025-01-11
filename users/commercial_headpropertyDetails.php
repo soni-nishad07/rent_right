@@ -260,7 +260,7 @@ $stmt->close();
     ?>
 
 
-    <form action="" method="post" onclick="window.location.href='buy_search_property' ">
+    <form action="" method="post" onclick="window.location.href='commercial_search_property' ">
 
         <div class="overlay" id="overlay"></div>
         <main id="main-content">
@@ -321,7 +321,7 @@ $stmt->close();
 
 
             <div class="filters-btn2">
-                <a href="buy_property2">More Filters</a>
+                <a href="commercial_property2">More Filters</a>
             </div>
 
         </main>
@@ -329,7 +329,7 @@ $stmt->close();
 
         <section class="locations-property">
             <div class="location-tags">
-                <form action="" method="post" class="form-group location-form" onclick="window.location.href='buy_search_property' ">
+                <form action="" method="post" class="form-group location-form" onclick="window.location.href='commercial_search_property' ">
                     <i class="fa-solid fa-location-dot location-icons"></i>
 
                     <!-- Area Search Field -->
@@ -378,7 +378,7 @@ $stmt->close();
 
                     <button type="submit" class="btn" style="color:red;">Search</button>
 
-                    <button type="button" class="btn" onclick="window.location.href='search_property.php'">
+                    <button type="button" class="btn" onclick="window.location.href='commercial_headpropertyDetails.php'">
                         <i class="fa fa-refresh plus_location" aria-hidden="true"></i>
                     </button>
                 </form>
@@ -917,7 +917,7 @@ $stmt->close();
             function resetSearch() {
                 document.getElementById('location-search').value = '';
                 // Clear the search form and optionally reload the page
-                window.location.href = 'property.php'; // Reload property.php to reset search
+                window.location.href = 'commercial_search_property'; // Reload property.php to reset search
             }
 
 

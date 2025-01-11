@@ -2,8 +2,6 @@
 session_start();
 include('../connection.php');
 
-
-
 $is_logged_in = isset($_SESSION['user_id']);
 
 // Sanitize function to prevent SQL Injection
@@ -38,9 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['bhk_type']) && !empty($_POST['bhk_type'])) {
         $bhkType = sanitize($_POST['bhk_type']);
     }
-    if (isset($_POST['price_range']) && !empty($_POST['price_range'])) {
-        $priceRange = sanitize($_POST['price_range']);
+
+    if (isset($_POST['expected_rent']) && !empty($_POST['expected_rent'])) {
+        // Remove commas and sanitize the input
+        $priceRange = sanitize(str_replace(',', '', $_POST['expected_rent']));
     }
+
     if (isset($_POST['furnishing']) && !empty($_POST['furnishing'])) {
         $furnishing = sanitize($_POST['furnishing']);
     }
@@ -49,10 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Build the query
-    // $query = "SELECT * FROM properties WHERE 1=1";
-
-    $query = "SELECT * FROM properties WHERE  approval_status = 'Approved'";
-
+    $query = "SELECT * FROM properties WHERE approval_status = 'Approved'";
 
     if (!empty($location)) {
         $query .= " AND area LIKE '%$location%'";
@@ -66,12 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($bhkType)) {
         $query .= " AND REPLACE(bhk_type, ' ', '') = REPLACE('$bhkType', ' ', '')";
     }
+
+    // Check if priceRange is a range (e.g., "1000 - 5000")
     if (!empty($priceRange)) {
-        if (strpos($priceRange, '-') !== false) {
-            list($minPrice, $maxPrice) = explode('-', $priceRange);
-            $query .= " AND expected_deposit BETWEEN $minPrice AND $maxPrice";
+        $priceParts = explode(' - ', $priceRange); // Split the price range into min and max values
+        if (count($priceParts) == 2) {
+            $minPrice = intval($priceParts[0]);
+            $maxPrice = intval($priceParts[1]);
+            $query .= " AND expected_rent BETWEEN $minPrice AND $maxPrice"; // Compare with a range using BETWEEN
+        } else {
+            // If priceRange is a single value, compare it directly with expected_rent
+            $query .= " AND expected_rent = $priceRange";
         }
     }
+
     if (!empty($furnishing)) {
         $query .= " AND furnishing = '$furnishing'";
     }
@@ -247,25 +253,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="filters">
                 <div class="dropdown2">
                     <form action="" method="post">
+                        <label for="Rent">Search</label>
+
+         
 
 
-                        <span>
-                            <label for="Rent">Rent</label>
-                            <select id="bhk_type" name="bhk_type">
-                                <option value="">Select BHK Type</option>
-                                <?php
-                                if ($bhk_result->num_rows > 0) {
-                                    while ($row = $bhk_result->fetch_assoc()) {
-                                        echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
-                                    }
-                                } else {
-                                    echo "<option value=''>No BHK Types Available</option>";
-                                }
-                                ?>
-                            </select>
-                        </span>
 
-                        <select id="price_range" name="price_range">
+                        <select id="bhk_type" name="bhk_type">
+    <option value="">Select BHK Type</option>
+    <?php
+    if ($bhk_result->num_rows > 0) {
+        while ($row = $bhk_result->fetch_assoc()) {
+            $bhk_type = htmlspecialchars($row['bhk_type']);
+            if (!empty($bhk_type)) {
+                echo "<option value='$bhk_type'>$bhk_type</option>";
+            }
+        }
+    } else {
+        echo "<option value=''>No BHK Types Available</option>";
+    }
+    ?>
+</select>
+                        
+
+                        <select id="price_range" name="expected_rent">
                             <option value="">Price Range</option>
                             <?php
                             if ($price_result->num_rows > 0) {
@@ -293,7 +304,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 Unfurnished</option>
                         </select>
 
-                        <select id="property_type" name="property_type">
+                        <!-- <select id="property_type" name="property_type">
                             <option value="">Property Type</option>
                             <option value="Flat" <?php echo $propertyType == 'Flat' ? 'selected' : ''; ?>>Flat</option>
                             <option value="Building" <?php echo $propertyType == 'Building' ? 'selected' : ''; ?>>
@@ -304,8 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 Commercial</option>
                             <option value="Villa" <?php echo $propertyType == 'Villa' ? 'selected' : ''; ?>>Villa
                             </option>
-                        </select>
-
+                        </select> -->
 
                         <button type="submit" class="btn">Search</button>
                     </form>
@@ -313,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="filters-btn2">
-                <a href="property2.php">More Filters</a>
+                <a href="rent_property2">More Filters</a>
             </div>
 
         </div>
@@ -372,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" class="btn" style="color:red;">Search</button>
 
-                <button type="button" class="btn" onclick="window.location.href='search_property.php'">
+                <button type="button" class="btn" onclick="window.location.href='rent_search_property'">
                     <i class="fa fa-refresh plus_location" aria-hidden="true"></i>
                 </button>
             </form>
@@ -383,8 +393,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Saved Properties<i class="fas fa-heart" style="color: red; padding-left: 5px;"></i>
             </a>
         </div> -->
-    </section>
 
+    </section>
 
 
 
@@ -401,6 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+
 
 
     <!-- <div class="property_result2">
@@ -526,18 +537,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
+
+
+
     <?php
     // Initialize variables
     $error_message = '';
     $properties = [];
-    $where_sql = "WHERE 1=1";  // Initialize WHERE clause for the query
+    
+    $where_sql = "WHERE 1=1 AND approval_status = 'Approved'";
+
+    // $where_sql = "WHERE 1=1";  // Initialize WHERE clause for the query
 
     // Handle search request
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Sanitize and fetch user input from the search form
-        $location = isset($_POST['location']) ? sanitize($_POST['location']) : '';
+
+        // $location = isset($_POST['location']) ? sanitize($_POST['location']) : '';
+        $location = isset($_POST['area']) ? sanitize($_POST['area']) : '';
         $bhkType = isset($_POST['bhk_type']) ? sanitize($_POST['bhk_type']) : '';
-        $priceRange = isset($_POST['expected_deposit']) ? sanitize($_POST['expected_deposit']) : '';
+        // $priceRange = isset($_POST['expected_deposit']) ? sanitize($_POST['expected_deposit']) : '';
+        $priceRange = isset($_POST['expected_rent']) ? sanitize($_POST['expected_rent']) : '';
         $city = isset($_POST['city']) ? sanitize($_POST['city']) : '';
         $state = isset($_POST['state']) ? sanitize($_POST['state']) : '';
         $furnishing = isset($_POST['furnishing']) ? sanitize($_POST['furnishing']) : '';
@@ -550,13 +570,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($bhkType)) {
             $where_sql .= " AND REPLACE(bhk_type, ' ', '') = REPLACE('$bhkType', ' ', '')";
         }
-        if (!empty($priceRange)) {
-            if (strpos($priceRange, '-') !== false) {
-                list($minPrice, $maxPrice) = explode('-', $priceRange);
-                $maxPrice = ($maxPrice == 'above') ? 9999999 : $maxPrice;  // Handle 'above' as upper bound
-                $where_sql .= " AND expected_deposit BETWEEN $minPrice AND $maxPrice";
-            }
+        // if (!empty($priceRange)) {
+        //     if (strpos($priceRange, '-') !== false) {
+        //         list($minPrice, $maxPrice) = explode('-', $priceRange);
+        //         $maxPrice = ($maxPrice == 'above') ? 9999999 : $maxPrice;  // Handle 'above' as upper bound
+        //         $where_sql .= " AND expected_deposit BETWEEN $minPrice AND $maxPrice";
+        //     }
+        // }
+
+        if (isset($_POST['expected_rent']) && !empty($_POST['expected_rent'])) {
+            // Remove commas and sanitize the input
+            $priceRange = sanitize(str_replace(',', '', $_POST['expected_rent']));
         }
+
+
         if (!empty($city)) {
             $where_sql .= " AND city LIKE '%$city%'";
         }
@@ -728,6 +755,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ?>
         </section>
     </div>
+
+
 
 
 
@@ -949,7 +978,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function resetSearch() {
             document.getElementById('location-search').value = '';
             // Clear the search form and optionally reload the page
-            window.location.href = 'property.php'; // Reload property.php to reset search
+            window.location.href = 'rent_search_property'; // Reload property.php to reset search
         }
 
 

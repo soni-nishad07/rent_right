@@ -2,8 +2,6 @@
 session_start();
 include('../connection.php');
 
-
-
 $is_logged_in = isset($_SESSION['user_id']);
 
 // Sanitize function to prevent SQL Injection
@@ -26,33 +24,22 @@ $properties = [];
 
 // Handle search request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['area']) && !empty($_POST['area'])) {
-        $location = sanitize($_POST['area']);
-    }
-    if (isset($_POST['city']) && !empty($_POST['city'])) {
-        $city = sanitize($_POST['city']);
-    }
-    if (isset($_POST['state']) && !empty($_POST['state'])) {
-        $state = sanitize($_POST['state']);
-    }
-    if (isset($_POST['bhk_type']) && !empty($_POST['bhk_type'])) {
-        $bhkType = sanitize($_POST['bhk_type']);
-    }
-    if (isset($_POST['price_range']) && !empty($_POST['price_range'])) {
-        $priceRange = sanitize($_POST['price_range']);
-    }
-    if (isset($_POST['furnishing']) && !empty($_POST['furnishing'])) {
-        $furnishing = sanitize($_POST['furnishing']);
-    }
-    if (isset($_POST['property_type']) && !empty($_POST['property_type'])) {
-        $propertyType = sanitize($_POST['property_type']);
-    }
+    $location = isset($_POST['area']) ? sanitize($_POST['area']) : '';
+    $city = isset($_POST['city']) ? sanitize($_POST['city']) : '';
+    $state = isset($_POST['state']) ? sanitize($_POST['state']) : '';
+
+    $bhkType = isset($_POST['bhk_type']) ? sanitize($_POST['bhk_type']) : '';
+
+    // $priceRange = isset($_POST['price_range']) ? sanitize($_POST['price_range']) : '';
+
+    $priceRange = isset($_POST[' expected_rent']) ? sanitize($_POST['expected_rent']) : '';
+
+
+    $furnishing = isset($_POST['furnishing']) ? sanitize($_POST['furnishing']) : '';
+    $propertyType = isset($_POST['property_type']) ? sanitize($_POST['property_type']) : '';
 
     // Build the query
-    // $query = "SELECT * FROM properties WHERE 1=1";
-
-    $query = "SELECT * FROM properties WHERE  approval_status = 'Approved'";
-
+    $query = "SELECT * FROM properties WHERE approval_status = 'Approved'";
 
     if (!empty($location)) {
         $query .= " AND area LIKE '%$location%'";
@@ -64,19 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query .= " AND state LIKE '%$state%'";
     }
     if (!empty($bhkType)) {
-        $query .= " AND REPLACE(bhk_type, ' ', '') = REPLACE('$bhkType', ' ', '')";
+        // Normalize bhk_type and user input by removing spaces
+        $query .= " AND REPLACE(REPLACE(bhk_type, ' ', ''), '\t', '') = REPLACE(REPLACE('$bhkType', ' ', ''), '\t', '')";
     }
     if (!empty($priceRange)) {
         if (strpos($priceRange, '-') !== false) {
             list($minPrice, $maxPrice) = explode('-', $priceRange);
-            $query .= " AND expected_deposit BETWEEN $minPrice AND $maxPrice";
+            $query .= " AND expected_rent BETWEEN $minPrice AND $maxPrice";
         }
     }
     if (!empty($furnishing)) {
         $query .= " AND furnishing = '$furnishing'";
     }
     if (!empty($propertyType)) {
-        $query .= " AND property_type = '$propertyType'";
+        // Normalize property_type and user input by removing spaces
+        $query .= " AND REPLACE(REPLACE(property_type, ' ', ''), '\t', '') = REPLACE(REPLACE('$propertyType', ' ', ''), '\t', '')";
     }
 
     // Execute the query
@@ -90,6 +79,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = "No properties found based on your search criteria.";
     }
 }
+
+// Fetch query parameters
+$bhk_type = isset($_GET['bhk_type']) ? strtoupper(trim($_GET['bhk_type'])) : null;
+$property_type = isset($_GET['property_type']) ? strtoupper(trim($_GET['property_type'])) : null;
+$available_for = isset($_GET['available_for']) ? strtoupper(trim($_GET['available_for'])) : null;
+
+// Initialize the SQL query
+$sql = "SELECT * FROM properties WHERE available_for = ? AND approval_status = 'Approved'";
+
+// Add filters based on parameters
+if ($bhk_type && $available_for === 'RENT') {
+    // Normalize bhk_type and user input by removing spaces
+    $sql .= " AND REPLACE(REPLACE(UPPER(bhk_type), ' ', ''), '\t', '') = REPLACE(REPLACE(?, ' ', ''), '\t', '')";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $available_for, $bhk_type);
+} elseif ($property_type && $available_for === 'SALE') {
+    // Normalize property_type and user input by removing spaces
+    $sql .= " AND REPLACE(REPLACE(UPPER(property_type), ' ', ''), '\t', '') = REPLACE(REPLACE(?, ' ', ''), '\t', '')";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $available_for, $property_type);
+} else {
+    // Prepare the base query without additional filters
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $available_for);
+}
+
+// Execute the query
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Initialize an array to store properties
+$properties = [];
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $properties[] = $row;
+    }
+} else {
+    $error_message = "No properties found based on your search criteria.";
+}
+
+// Closing the statement
+$stmt->close();
 ?>
 
 
@@ -151,7 +183,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 
-
         .modal {
             position: fixed;
             top: 50% !important;
@@ -166,15 +197,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 100% !important;
             object-fit: cover;
         }
-
-        i.fa-regular.fa-heart,
-        .heart-icons {
-            font-size: 24px !important;
-            margin: 5px 25px !important;
-            color: #4f4f4f;
-        }
     </style>
+
     <?php include('../links.php'); ?>
+
     <script>
         // Initialize the Google Places API Autocomplete
         function initAutocomplete() {
@@ -220,25 +246,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <body>
-
-
     <?php include('user-head.php'); ?>
 
-
-
     <?php
-
     // Fetch distinct BHK types from the category table
     $bhk_query = "SELECT DISTINCT bhk_type FROM category WHERE bhk_type IS NOT NULL ORDER BY bhk_type";
     $bhk_result = $conn->query($bhk_query);
 
-    // Fetch distinct price ranges from the category table
-    $price_query = "SELECT DISTINCT expected_rent_from, expected_rent_to FROM category WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL ORDER BY expected_rent_from";
-    $price_result = $conn->query($price_query);
 
+    // Fetch expected rent ranges
+    $expected_rent_query = "SELECT DISTINCT expected_rent_from, expected_rent_to FROM category WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL ORDER BY expected_rent_from";
+    $expected_rent_result = $conn->query($expected_rent_query);
+
+    // Fetch commercial rent ranges
+    $commercial_rent_query = "SELECT DISTINCT commercial_rent_from, commercial_rent_to FROM category WHERE property_choose LIKE '%Commercial%'";
+    $commercial_rent_result = $conn->query($commercial_rent_query);
+
+    // Fetch deposit ranges
+    $deposit_query = "SELECT DISTINCT expected_deposit_from, expected_deposit_to FROM category WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL";
+    $deposit_result = $conn->query($deposit_query);
+
+    // Fetch property types (both residential and commercial)
+    $property_type_query = "SELECT DISTINCT property_type FROM category WHERE property_type IS NOT NULL";
+    $property_type_result = $conn->query($property_type_query);
     ?>
-
-
 
     <div class="overlay" id="overlay"></div>
     <main id="main-content">
@@ -246,38 +277,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="property-filter2">
             <div class="filters">
                 <div class="dropdown2">
-                    <form action="" method="post">
+                    <form action="" method="post" onclick="window.location.href='rent_search_property' ">
+                        <label for="Rent">Search</label>
 
 
-                        <span>
-                            <label for="Rent">Rent</label>
-                            <select id="bhk_type" name="bhk_type">
-                                <option value="">Select BHK Type</option>
-                                <?php
-                                if ($bhk_result->num_rows > 0) {
-                                    while ($row = $bhk_result->fetch_assoc()) {
-                                        echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
-                                    }
-                                } else {
-                                    echo "<option value=''>No BHK Types Available</option>";
-                                }
-                                ?>
-                            </select>
-                        </span>
-
-                        <select id="price_range" name="price_range">
-                            <option value="">Price Range</option>
+                        <select id="bhk_type" name="bhk_type">
+                            <option value="">Select BHK Type</option>
                             <?php
-                            if ($price_result->num_rows > 0) {
-                                while ($row = $price_result->fetch_assoc()) {
-                                    $price_range = number_format($row['expected_rent_from']) . " - " . number_format($row['expected_rent_to']);
-                                    echo "<option value='" . $price_range . "'>" . $price_range . "</option>";
+                            if ($bhk_result->num_rows > 0) {
+                                while ($row = $bhk_result->fetch_assoc()) {
+                                    echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
                                 }
                             } else {
-                                echo "<option value=''>No Rent Ranges Available</option>";
+                                echo "<option value=''>No BHK Types Available</option>";
                             }
                             ?>
                         </select>
+
+
+                        <!-- Price Range Dropdown -->
+                        <select id="price_range" name="expected_rent">
+                            <option value="">Select Price Range</option>
+                            <?php
+                            if ($expected_rent_result->num_rows > 0) {
+                                while ($row = $expected_rent_result->fetch_assoc()) {
+                                    $expected_rent_range = number_format($row['expected_rent_from']) . " - " . number_format($row['expected_rent_to']);
+                                    echo "<option value='" . htmlspecialchars($expected_rent_range) . "'>" . htmlspecialchars($expected_rent_range) . "</option>";
+                                }
+                            }
+
+                            // Commercial Rent Range
+                            if ($commercial_rent_result->num_rows > 0) {
+                                while ($row = $commercial_rent_result->fetch_assoc()) {
+                                    $commercial_rent_range = number_format($row['commercial_rent_from']) . " - " . number_format($row['commercial_rent_to']);
+                                    echo "<option value='" . htmlspecialchars($commercial_rent_range) . "'>" . htmlspecialchars($commercial_rent_range) . "</option>";
+                                }
+                            }
+
+                            // Deposit Range
+                            if ($deposit_result->num_rows > 0) {
+                                while ($row = $deposit_result->fetch_assoc()) {
+                                    $deposit_range = number_format($row['expected_deposit_from']) . " - " . number_format($row['expected_deposit_to']);
+                                    echo "<option value='" . htmlspecialchars($deposit_range) . "'>" . htmlspecialchars($deposit_range) . "</option>";
+                                }
+                            }
+
+                            // If no ranges found, display a default message
+                            if ($expected_rent_result->num_rows == 0 && $commercial_rent_result->num_rows == 0 && $deposit_result->num_rows == 0) {
+                                echo "<option value=''>No Price Ranges Available</option>";
+                            }
+                            ?>
+                        </select>
+
+
+
 
 
                         <select id="furnishing" name="furnishing">
@@ -293,19 +346,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 Unfurnished</option>
                         </select>
 
-                        <select id="property_type" name="property_type">
-                            <option value="">Property Type</option>
-                            <option value="Flat" <?php echo $propertyType == 'Flat' ? 'selected' : ''; ?>>Flat</option>
-                            <option value="Building" <?php echo $propertyType == 'Building' ? 'selected' : ''; ?>>
-                                Building
-                            </option>
-                            <option value="Site" <?php echo $propertyType == 'Site' ? 'selected' : ''; ?>>Site</option>
-                            <option value="Commercial" <?php echo $propertyType == 'Commercial' ? 'selected' : ''; ?>>
-                                Commercial</option>
-                            <option value="Villa" <?php echo $propertyType == 'Villa' ? 'selected' : ''; ?>>Villa
-                            </option>
-                        </select>
-
 
                         <button type="submit" class="btn">Search</button>
                     </form>
@@ -313,7 +353,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="filters-btn2">
-                <a href="property2.php">More Filters</a>
+                <a href="rent_property2.php">More Filters</a>
             </div>
 
         </div>
@@ -323,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <section class="locations-property">
         <div class="location-tags">
-            <form action="" method="post" class="form-group location-form">
+            <form action="" method="post" class="form-group location-form" onclick="window.location.href='rent_search_property' ">
                 <i class="fa-solid fa-location-dot location-icons"></i>
 
                 <!-- Area Search Field -->
@@ -378,11 +418,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
 
+
         <!-- <div class="location-btn">
             <a class="saved-property" href="<?php echo $is_logged_in ? 'save.php' : '#'; ?>" onclick="<?php echo $is_logged_in ? '' : 'showPopup(); return false;'; ?>">
                 Saved Properties<i class="fas fa-heart" style="color: red; padding-left: 5px;"></i>
             </a>
         </div> -->
+
     </section>
 
 
@@ -403,27 +445,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
 
-    <!-- <div class="property_result2">
-        <h2>Search Results</h2>
-        <p>Here are the properties that match your search criteria.</p>
-    </div> -->
+
 
     <div class="container">
         <?php if (!empty($properties)): ?>
             <div class="row">
                 <?php foreach ($properties as $row): ?>
-                    <div class="col-lg-12 mb-3">
+                    <div class="col-lg-12 mb-3  property-box-cont">
                         <div class="card property-box">
                             <div class="row g-0">
+                                <!-- Property Images -->
+                                <!-- Property Images -->
                                 <div class="col-md-12 col-lg-4 property-image">
-                                    <div class='image-placeholder'>
+                                    <div class="image-placeholder">
                                         <?php $images = explode(',', $row['file_upload']); ?>
                                         <?php if (count($images) > 0): ?>
                                             <div id="propertySlider<?php echo $row['id']; ?>" class="carousel slide" data-bs-ride="carousel">
                                                 <div class="carousel-inner">
                                                     <?php foreach ($images as $index => $image): ?>
                                                         <div class="carousel-item <?php echo $index == 0 ? 'active' : ''; ?>" onclick="openImagePopup(<?php echo $row['id']; ?>)">
-                                                            <img src="<?php echo $image; ?>" class="d-block w-100" alt="Property Image">
+                                                            <img src="<?php echo htmlspecialchars($image); ?>" class="d-block w-100" alt="Property Image">
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </div>
@@ -440,40 +481,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
 
+                                <!-- Property Details -->
                                 <div class="col-md-12 col-lg-2 property-details">
-                                    <div class="detail-item">Rent- <?php echo htmlspecialchars($row['expected_rent']); ?></div>
-                                    <div class="detail-item">Location - <?php echo htmlspecialchars($row['area']); ?></div>
-                                    <div class="detail-item_area">Area- <?php echo htmlspecialchars($row['build_up_area']); ?> sqft</div>
+                                    <div class="detail-item">Rent: <?php echo htmlspecialchars($row['expected_rent']); ?></div>
+                                    <div class="detail-item">Location: <?php echo htmlspecialchars($row['area']); ?></div>
+                                    <div class="detail-item_area">Area: <?php echo htmlspecialchars($row['build_up_area']); ?> sqft</div>
                                 </div>
 
+                                <!-- Property Highlights and Actions -->
                                 <div class="col-md-12 col-lg-6">
                                     <div class="property-body">
                                         <div class="property-info">
                                             <div class="info-item"><?php echo htmlspecialchars($row['furnishing']); ?><br><span>Furnishing</span></div>
                                             <div class="info-item"><?php echo htmlspecialchars($row['bhk_type']); ?><br><span>Apartment Type</span></div>
                                             <div class="info-item"><?php echo htmlspecialchars($row['preferred_tenants']); ?><br><span>Tenant Type</span></div>
-                                            <div class="info-item"><?php echo htmlspecialchars($row['available_from']); ?><br><span>Available</span></div>
+                                            <div class="info-item"><?php echo htmlspecialchars($row['available_from']); ?><br><span>Available From</span></div>
                                         </div>
 
                                         <div class="property-hylt">
                                             <p class="property-highlight" onclick="showPropertyDetails(<?php echo $row['id']; ?>)">Property Highlight</p>
-                                            <p class="property-id"><b>Property Id :</b> <span><?php echo htmlspecialchars($row['id']); ?></span></p>
+                                            <p class="property-id"><b>Property ID:</b> <span><?php echo htmlspecialchars($row['id']); ?></span></p>
                                         </div>
 
                                         <div class="contact-property">
                                             <div class="contact-button">
-                                                <a class="btn btn-primary book-service" data-property-id="<?php echo $row['id']; ?>" onclick="openModalCustom('<?php echo $row['bhk_type']; ?>', '<?php echo $row['property_type']; ?>')">Schedule visit </a>
-                                                <div class="heart-icons">
-                                                    <i class="fa-regular fa-heart" onclick="saveProperty(<?php echo $row['id']; ?>, this)"></i>
+                                                <a class="btn btn-primary book-service" data-property-id="<?php echo $row['id']; ?>" onclick="openModalCustom('<?php echo $row['bhk_type']; ?>', '<?php echo $row['property_type']; ?>')">Schedule Visit</a>
+
+
+                                                <div class="heart-iocns">
+                                                    <i class="fa-regular fa-heart"
+                                                        onclick="saveProperty(<?php echo $row['id']; ?>, this)"></i>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Popup Modal -->
                     <div class="modal fade" id="imagePopup<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="imagePopupLabel" aria-hidden="true">
@@ -508,9 +555,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                 <?php endforeach; ?>
+
             </div>
         <?php else: ?>
-            <div class="no-properties">No properties found based on your search criteria.</div>
+            <div class="no-properties"><?php echo $error_message; ?></div>
         <?php endif; ?>
     </div>
 
@@ -524,6 +572,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 
+
+
+    <!----------------------- recomended property------------------------- -->
 
 
     <?php
@@ -572,8 +623,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Query to fetch properties based on the built WHERE clause
-    $query = "SELECT * FROM properties $where_sql";
-    $query_run = mysqli_query($conn, $query);
+    // $query = "SELECT * FROM properties $where_sql";
+    // $query_run = mysqli_query($conn, $query);
+
+
+
+    // Fetch query parameters
+    $bhk_type = isset($_GET['bhk_type']) ? strtoupper(trim($_GET['bhk_type'])) : null;
+    $property_type = isset($_GET['property_type']) ? strtoupper(trim($_GET['property_type'])) : null;
+    $available_for = isset($_GET['available_for']) ? strtoupper(trim($_GET['available_for'])) : null;
+
+    // Initialize the SQL query
+    $sql = "SELECT * FROM properties WHERE available_for = ?";
+    $params = [$available_for];
+    $types = "s";
+
+    // Add filters based on parameters
+    if ($bhk_type && $available_for === 'RENT') {
+        $sql .= " AND UPPER(bhk_type) = ?";
+        $params[] = $bhk_type;
+        $types .= "s";
+    } elseif ($property_type && $available_for === 'SALE') {
+        $sql .= " AND UPPER(property_type) = ?";
+        $params[] = $property_type;
+        $types .= "s";
+    }
+
+    // Prepare and execute the query
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Initialize an array to store properties
+    $properties = [];
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $properties[] = $row;
+        }
+    } else {
+        $error_message = "No properties found based on your search criteria.";
+    }
+
+    // Closing the statement
+    $stmt->close();
     ?>
 
     <div class="container">
@@ -585,10 +678,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div id="recommendedCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <?php
-                    $itemCount = 0;
-                    $activeClass = 'active';
-                    if (mysqli_num_rows($query_run) > 0) {
-                        while ($row = mysqli_fetch_assoc($query_run)) {
+                    if (!empty($properties)) {
+                        $itemCount = 0;
+                        $activeClass = 'active';
+                        foreach ($properties as $row) {
                             $images = explode(',', $row['file_upload']);
                             if ($itemCount % 3 == 0) {
                                 if ($itemCount != 0) echo '</div></div>';
@@ -618,115 +711,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     ?>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#recommendedCarousel"
-                    data-bs-slide="prev">
+                <button class="carousel-control-prev" type="button" data-bs-target="#recommendedCarousel" data-bs-slide="prev">
                     <div class="icon left"><i class="fa-solid fa-angle-left" id="l"></i></div>
                     <span class="visually-hidden">Previous</span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#recommendedCarousel"
-                    data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#recommendedCarousel" data-bs-slide="next">
                     <div class="icon right"><i class="fa-solid fa-angle-right" id="r"></i></div>
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
         </section>
 
-        <!-- Property Search Results -->
-        <section class="property-results">
-            <?php
-            if (mysqli_num_rows($query_run) > 0) {
-                while ($row = mysqli_fetch_assoc($query_run)) {
-                    $images = explode(',', $row['file_upload']);
-            ?>
-                    <!-- Property Display -->
-                    <div class="row properties">
-                        <div class="col-lg-12">
-                            <div class="card property-box mb-3">
-                                <div class="row g-0">
-                                    <div class="col-md-12 col-lg-4 col-sm-12 property-image">
-                                        <div class='image-placeholder'>
-                                            <?php if (count($images) > 0) { ?>
-                                                <div id="propertySlider<?php echo $row['id']; ?>" class="carousel slide"
-                                                    data-bs-ride="carousel">
-                                                    <div class="carousel-inner">
-                                                        <?php
-                                                        foreach ($images as $index => $image) {
-                                                            $active = $index == 0 ? 'active' : '';
-                                                            echo "<div class='carousel-item $active'>
-                                                            <img src='$image' class='d-block w-100' alt='Property Image'>
-                                                        </div>";
-                                                        }
-                                                        ?>
-                                                    </div>
-                                                    <button class="carousel-control-prev" type="button"
-                                                        data-bs-target="#propertySlider<?php echo $row['id']; ?>"
-                                                        data-bs-slide="prev">
-                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                        <span class="visually-hidden">Previous</span>
-                                                    </button>
-                                                    <button class="carousel-control-next" type="button"
-                                                        data-bs-target="#propertySlider<?php echo $row['id']; ?>"
-                                                        data-bs-slide="next">
-                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                        <span class="visually-hidden">Next</span>
-                                                    </button>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12 col-lg-2 col-sm-12 property-details">
-                                        <div class="detail-item">Rent- <?php echo $row['expected_rent']; ?></div>
-                                        <div class="detail-item">Deposit- <?php echo $row['expected_deposit']; ?></div>
-                                        <div class="detail-item_area">Area- <?php echo $row['build_up_area']; ?> sqft</div>
-                                    </div>
-
-                                    <div class="col-md-12 col-lg-6 col-sm-12">
-                                        <div class="property-body">
-                                            <div class="property-info">
-                                                <div class="info-item"><?php echo $row['furnishing']; ?><br><span>Furnishing</span></div>
-                                                <div class="info-item"><?php echo $row['bhk_type']; ?><br><span>Apartment Type</span></div>
-                                                <div class="info-item"><?php echo $row['preferred_tenants']; ?><br><span>Tenant Type</span></div>
-                                                <div class="info-item"><?php echo $row['available_from']; ?><br><span>Available</span></div>
-                                            </div>
-
-                                            <div class="property-hylt">
-                                                <p class="property-highlight"
-                                                    onclick="showPropertyDetails(<?php echo $row['id']; ?>)">
-                                                    Property Highlight
-                                                </p>
-                                                <p class="property-id"><b>Property Id: </b><span><?php echo $row['id']; ?></span></p>
-                                            </div>
-
-                                            <div class="contact-property">
-                                                <div class="contact-button">
-                                                    <a class="btn btn-primary book-service"
-                                                        data-property-id="<?php echo $row['id']; ?>"
-                                                        data-property-type="<?php echo $row['property_type']; ?>"
-                                                        data-service-name="<?php echo $row['bhk_type']; ?>"
-                                                        onclick="openModalCustom('<?php echo $row['bhk_type']; ?>', '<?php echo $row['property_type']; ?>')">
-                                                        Schedule visit
-                                                    </a>
-
-                                                    <div class="heart-iocns">
-                                                        <i class="fa-regular fa-heart" onclick="saveProperty(<?php echo $row['id']; ?>, this)"></i>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            <?php
-                }
-            } else {
-                // echo '<p>No properties found matching your criteria.</p>';
-            }
-            ?>
-        </section>
     </div>
 
 
@@ -762,6 +757,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         </div>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -818,6 +814,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 
+
+
     <!-- Modal for Booking Form -->
     <div id="customModal" class="modal-custom">
         <div class="modal-content-custom">
@@ -860,6 +858,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+
+
     <script>
         // Function to open the modal
         function openModalCustom(serviceName) {
@@ -877,6 +877,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return true;
         }
     </script>
+
+
 
     <script>
         // Modal handling

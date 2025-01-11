@@ -28,29 +28,11 @@ if (isset($_POST['property_type']) && !empty($_POST['property_type'])) {
     $propertyType = $_POST['property_type'];
 }
 
-   // Start building the query with the mandatory conditions
-   $query = "SELECT * FROM properties WHERE 1=1";
+$query = "SELECT * FROM properties WHERE 1=1";
 
-    //  $query = "SELECT * FROM properties WHERE approval_status = 'Approved'";
-
-     if (!empty($location)) {
-         $query .= " AND area LIKE '%$location%'";
-     }
-
-     
-        // if (!empty($location)) {
-        //     $query .= " AND city LIKE '%$location%'";
-        // }
-
-
-     if (!empty($city)) {
-         $query .= " AND city LIKE '%$city%'";
-     }
-     if (!empty($state)) {
-         $query .= " AND state LIKE '%$state%'";
-     }
-
-
+if (!empty($location)) {
+    $query .= " AND city LIKE '%$location%'";
+}
 if (!empty($bhkType)) {
     // Modify the query to match both '1bhk' and '1 bhk'
     $query .= " AND REPLACE(bhk_type, ' ', '') = REPLACE('$bhkType', ' ', '')";
@@ -87,30 +69,6 @@ $result = mysqli_query($conn, $query);
     <?php
     include('../links.php');
     ?>
-
-    <style>
-
-        /* -----------popup modal img--------- */
-
-        .modal {
-            position: fixed;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            display: none;
-        }
-
-        .carousel-item.active img.pop_img {
-        /* height: 80vh !important;  */
-            height: 100% !important; 
-            object-fit: cover; 
-        }
-
-
-
-    </style>
-
     <script>
         function initAutocomplete() {
             var input = document.getElementById('location-search');
@@ -191,24 +149,29 @@ $result = mysqli_query($conn, $query);
                             <div class="card property-box mb-3">
                                 <div class="row g-0">
                                     <div class="col-md-12 col-lg-4 col-sm-12 property-image">
-                                        <div class="image-placeholder">
+                                        <div class='image-placeholder'>
                                             <?php if (count($images) > 0) { ?>
-                                                <div id="propertySlider<?php echo $row['id']; ?>" class="carousel slide" data-bs-ride="carousel">
+                                                <div id="propertySlider<?php echo $row['id']; ?>" class="carousel slide"
+                                                    data-bs-ride="carousel">
                                                     <div class="carousel-inner">
                                                         <?php
                                                         foreach ($images as $index => $image) {
                                                             $active = $index == 0 ? 'active' : '';
                                                             echo "<div class='carousel-item $active'>
-                                            <img src='$image' class='d-block w-100' alt='Property Image' onclick='openImagePopup($row[id])'>
-                                          </div>";
+                                                <img src='$image' class='d-block w-100' alt='Property Image'>
+                                              </div>";
                                                         }
                                                         ?>
                                                     </div>
-                                                    <button class="carousel-control-prev" type="button" data-bs-target="#propertySlider<?php echo $row['id']; ?>" data-bs-slide="prev">
+                                                    <button class="carousel-control-prev" type="button"
+                                                        data-bs-target="#propertySlider<?php echo $row['id']; ?>"
+                                                        data-bs-slide="prev">
                                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                                         <span class="visually-hidden">Previous</span>
                                                     </button>
-                                                    <button class="carousel-control-next" type="button" data-bs-target="#propertySlider<?php echo $row['id']; ?>" data-bs-slide="next">
+                                                    <button class="carousel-control-next" type="button"
+                                                        data-bs-target="#propertySlider<?php echo $row['id']; ?>"
+                                                        data-bs-slide="next">
                                                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                                         <span class="visually-hidden">Next</span>
                                                     </button>
@@ -219,7 +182,7 @@ $result = mysqli_query($conn, $query);
 
                                     <div class="col-md-12 col-lg-2 col-sm-12 property-details">
                                         <div class="detail-item">Rent- <?php echo $row['expected_rent']; ?></div>
-                                        <div class="detail-item">Location - <?php echo $row['area']; ?></div>
+                                        <div class="detail-item">Location - <?php echo $row['city']; ?></div>
                                         <div class="detail-item_area">Area- <?php echo $row['build_up_area']; ?> sqft</div>
                                     </div>
 
@@ -228,90 +191,53 @@ $result = mysqli_query($conn, $query);
                                             <div class="property-info">
                                                 <div class="info-item">
                                                     <?php echo $row['furnishing']; ?><br><span>Furnishing</span></div>
-                                                <div class="info-item"><?php echo $row['bhk_type']; ?><br><span>Apartment Type</span></div>
-                                                <div class="info-item"><?php echo $row['preferred_tenants']; ?><br><span>Tenant Type</span></div>
+                                                <div class="info-item"><?php echo $row['bhk_type']; ?><br><span>Apartment
+                                                        Type</span></div>
+                                                <div class="info-item"><?php echo $row['preferred_tenants']; ?><br><span>Tenant
+                                                        Type</span></div>
                                                 <div class="info-item">
                                                     <?php echo $row['available_from']; ?><br><span>Available</span></div>
                                             </div>
 
                                             <div class="property-hylt">
-                                                <p class="property-highlight" onclick="showPropertyDetails(<?php echo $row['id']; ?>)">
+                                                <p class="property-highlight"
+                                                    onclick="showPropertyDetails(<?php echo $row['id']; ?>)">
                                                     Property Highlight
                                                 </p>
 
-                                                <p class="property-id"><b>Property Id : </b><span><?php echo $row['id']; ?></span></p>
+                                                <p class="property-id"><b>Property Id :
+                                                    </b><span><?php echo $row['id']; ?></span></p>
                                             </div>
 
                                             <div class="contact-property">
                                                 <div class="contact-button">
-                                                    <a class="btn btn-primary book-service" data-property-id="<?php echo $row['id']; ?>" data-property-type="<?php echo $row['property_type']; ?>" data-service-name="<?php echo $row['bhk_type']; ?>" onclick="openModalCustom('<?php echo $row['bhk_type']; ?>', '<?php echo $row['property_type']; ?>')">
+                                                    <a class="btn btn-primary book-service"
+                                                        data-property-id="<?php echo $row['id']; ?>"
+                                                        data-property-type="<?php echo $row['property_type']; ?>"
+                                                        data-service-name="<?php echo $row['bhk_type']; ?>"
+                                                        onclick="openModalCustom('<?php echo $row['bhk_type']; ?>', '<?php echo $row['property_type']; ?>')">
                                                         Schedule visit
                                                     </a>
                                                     <div class="heart-iocns">
-                                                        <i class="fa-regular fa-heart" onclick="saveProperty(<?php echo $row['id']; ?>, this)"></i>
+                                                        <i class="fa-regular fa-heart"
+                                                            onclick="saveProperty(<?php echo $row['id']; ?>, this)"></i>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-
             <?php
-        }
-    } else {
-        echo "<div class='no-properties'>No properties found based on your filters.</div>";
-    }
-            ?>
-
-                </div>
-
-
-
-                <!-- Popup Modal -->
-                <div class="modal fade" id="imagePopup<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="imagePopupLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="imagePopupLabel">Property Images</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div id="popupCarousel<?php echo $row['id']; ?>" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        <?php
-                                        foreach ($images as $index => $image) {
-                                            $active = $index == 0 ? 'active' : '';
-                                            echo "<div class='carousel-item $active'>
-                                <img src='$image' class='d-block w-100 h-100 pop_img' alt='Property Image'>
-                              </div>";
-                                        }
-                                        ?>
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#popupCarousel<?php echo $row['id']; ?>" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#popupCarousel<?php echo $row['id']; ?>" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    function openImagePopup(propertyId) {
-                        const modalId = `#imagePopup${propertyId}`;
-                        const modal = new bootstrap.Modal(document.querySelector(modalId));
-                        modal.show();
                     }
-                </script>
-
+                } else {
+                    echo "<div class='no-properties'>No properties found based on your filters.</div>";
+                }
+                        ?>
+                </div>
 
 
 
@@ -352,7 +278,7 @@ $result = mysqli_query($conn, $query);
                                                 <div class="card-body">
                                                     <p class="card-text"><b>Address</b></p>
                                                     <p class="card-text">
-                                                        <?php echo $row['area']; ?>
+                                                        <?php echo $row['city']; ?>
                                                     </p>
                                                     <a class="book-service" data-property-id="<?php echo $row['id']; ?>"
                                                         data-property-type="<?php echo $row['property_type']; ?>"
@@ -580,84 +506,84 @@ $result = mysqli_query($conn, $query);
 
                 <!-- Modal for Booking Form -->
                 <div id="customModal" class="modal-custom">
-                    <div class="modal-content-custom">
-                        <span class="close-custom" onclick="closeModalCustom()">&times;</span>
-                        <h1 class="booking_for-custom">Schedule a Visit: <span id="modalTitleCustom"></span></h1>
-                        <form id="bookingFormCustom" action="../service-insert.php" method="POST" onsubmit="return validateFormCustom()">
-                            <input type="hidden" id="booking_id_custom" name="booking_id" value="">
-                            <input type="hidden" id="service_name_custom" name="service_name" value="">
-                            <input type="hidden" id="booking_status_custom" name="booking_status" value="pending">
+    <div class="modal-content-custom">
+        <span class="close-custom" onclick="closeModalCustom()">&times;</span>
+        <h1 class="booking_for-custom">Schedule a Visit: <span id="modalTitleCustom"></span></h1>
+        <form id="bookingFormCustom" action="../service-insert.php" method="POST" onsubmit="return validateFormCustom()">
+            <input type="hidden" id="booking_id_custom" name="booking_id" value="">
+            <input type="hidden" id="service_name_custom" name="service_name" value="">
+            <input type="hidden" id="booking_status_custom" name="booking_status" value="pending">
+            
+            <div class="input-group-custom">
+                <input type="text" id="name_custom" name="name" placeholder="Name" required>
+            </div>
+            <div class="input-group-custom">
+                <input type="email" id="email_custom" name="email" placeholder="Email" required>
+            </div>
+            <div class="input-group-custom">
+                <input type="number" id="mobile_custom" name="mobile" placeholder="Mobile Number" required>
+            </div>
 
-                            <div class="input-group-custom">
-                                <input type="text" id="name_custom" name="name" placeholder="Name" required>
-                            </div>
-                            <div class="input-group-custom">
-                                <input type="email" id="email_custom" name="email" placeholder="Email" required>
-                            </div>
-                            <div class="input-group-custom">
-                                <input type="number" id="mobile_custom" name="mobile" placeholder="Mobile Number" required>
-                            </div>
+            <div class="input-group-custom">
+                <!-- <span>Provide Date For Booking!</span> -->
+            </div>
+            <button type="submit" name="book-services" class="book-services-custom">Schedule a Visit</button>
+        </form>
+    </div>
+</div>
 
-                            <div class="input-group-custom">
-                                <!-- <span>Provide Date For Booking!</span> -->
-                            </div>
-                            <button type="submit" name="book-services" class="book-services-custom">Schedule a Visit</button>
-                        </form>
-                    </div>
-                </div>
+<script>
+    // Open Modal
+    function openModalCustom(serviceName, propertyType) {
+        document.getElementById("modalTitleCustom").innerText = propertyType;
+        document.getElementById("service_name_custom").value = serviceName;
+        document.getElementById("customModal").style.display = "block";
+        document.getElementById("booking_id_custom").value = generateBookingIDCustom();
+    }
 
-                <script>
-                    // Open Modal
-                    function openModalCustom(serviceName, propertyType) {
-                        document.getElementById("modalTitleCustom").innerText = propertyType;
-                        document.getElementById("service_name_custom").value = serviceName;
-                        document.getElementById("customModal").style.display = "block";
-                        document.getElementById("booking_id_custom").value = generateBookingIDCustom();
-                    }
+    // Close Modal
+    function closeModalCustom() {
+        document.getElementById("customModal").style.display = "none";
+    }
 
-                    // Close Modal
-                    function closeModalCustom() {
-                        document.getElementById("customModal").style.display = "none";
-                    }
+    // Close Modal When Clicking Outside
+    window.onclick = function (event) {
+        if (event.target == document.getElementById("customModal")) {
+            closeModalCustom();
+        }
+    };
 
-                    // Close Modal When Clicking Outside
-                    window.onclick = function(event) {
-                        if (event.target == document.getElementById("customModal")) {
-                            closeModalCustom();
-                        }
-                    };
+    // Validate Form
+    function validateFormCustom() {
+        const name = document.getElementById("name_custom").value.trim();
+        const email = document.getElementById("email_custom").value.trim();
+        const mobile = document.getElementById("mobile_custom").value.trim();
 
-                    // Validate Form
-                    function validateFormCustom() {
-                        const name = document.getElementById("name_custom").value.trim();
-                        const email = document.getElementById("email_custom").value.trim();
-                        const mobile = document.getElementById("mobile_custom").value.trim();
+        if (!name || !email || !mobile) {
+            alert("All fields must be filled out");
+            return false;
+        }
 
-                        if (!name || !email || !mobile) {
-                            alert("All fields must be filled out");
-                            return false;
-                        }
+        const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+        if (!email.match(emailPattern)) {
+            alert("Please enter a valid email address");
+            return false;
+        }
 
-                        const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-                        if (!email.match(emailPattern)) {
-                            alert("Please enter a valid email address");
-                            return false;
-                        }
+        const mobilePattern = /^[0-9]{10}$/;
+        if (!mobile.match(mobilePattern)) {
+            alert("Please enter a valid 10-digit mobile number");
+            return false;
+        }
 
-                        const mobilePattern = /^[0-9]{10}$/;
-                        if (!mobile.match(mobilePattern)) {
-                            alert("Please enter a valid 10-digit mobile number");
-                            return false;
-                        }
+        return true;
+    }
 
-                        return true;
-                    }
-
-                    // Generate Unique Booking ID
-                    function generateBookingIDCustom() {
-                        return `booking_${Date.now()}`;
-                    }
-                </script>
+    // Generate Unique Booking ID
+    function generateBookingIDCustom() {
+        return `booking_${Date.now()}`;
+    }
+</script>
 
 
 

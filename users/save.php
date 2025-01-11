@@ -311,11 +311,12 @@ if (isset($_GET['remove_id'])) {
                         <input type="number" id="mobile_custom" name="mobile" placeholder="Mobile Number" required>
                     </div>
 
-                    <div class="input-group-custom">
+                    <!-- <div class="input-group-custom">
                         <input type="date" id="booking_date_custom" name="booking_date" required>
-                    </div>
+                    </div> -->
+
                     <div class="input-group-custom">
-                        <span>Provide Date For Booking!</span>
+                        <!-- <span>Provide Date For Booking!</span> -->
                     </div>
                     <button type="submit" name="book-services" class="book-services-custom">Schedule a Visit</button>
                 </form>
@@ -368,8 +369,9 @@ if (isset($_GET['remove_id'])) {
                 var name = document.getElementById("name_custom").value;
                 var email = document.getElementById("email_custom").value;
                 var mobile = document.getElementById("mobile_custom").value;
-                var date = document.getElementById("booking_date_custom").value;
-                if (name == "" || email == "" || mobile == "" || date == "") {
+                // var date = document.getElementById("booking_date_custom").value;
+                // if (name == "" || email == "" || mobile == "" || date == "") {
+                    if (name == "" || email == "" || mobile == "" ) {
                     alert("All fields must be filled out");
                     return false;
                 }

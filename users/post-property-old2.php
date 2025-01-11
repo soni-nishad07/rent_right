@@ -216,10 +216,7 @@ $bhk_result = $conn->query($bhk_query);
                         <?php
                         if ($bhk_result->num_rows > 0) {
                             while ($row = $bhk_result->fetch_assoc()) {
-                                $bhk_type = htmlspecialchars($row['bhk_type']);
-                                if (!empty($bhk_type)) {
-                                    echo "<option value='$bhk_type'>$bhk_type</option>";
-                                }
+                                echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
                             }
                         }
                         ?>
@@ -236,10 +233,7 @@ $bhk_result = $conn->query($bhk_query);
                         $bhk_result->data_seek(0);
                         if ($bhk_result->num_rows > 0) {
                             while ($row = $bhk_result->fetch_assoc()) {
-                                $bhk_type = htmlspecialchars($row['bhk_type']);
-                                if (!empty($bhk_type)) {
-                                    echo "<option value='$bhk_type'>$bhk_type</option>";
-                                }
+                                echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
                             }
                         }
                         ?>
@@ -247,24 +241,18 @@ $bhk_result = $conn->query($bhk_query);
                 </div>
 
 
-
-                <!-- Dynamic Property Type Selection -->
                 <!-- Dynamic Property Type Selection -->
                 <div class="form-control">
-                    <label for="propertyType">Property Type:</label>
+                <label for="propertyType">Property Type:</label>
                     <select id="propertyType" name="property_type" required>
                         <option value="">--Select Property Type--</option>
                         <?php
                         foreach ($property_types as $property_type) {
-                            $type = htmlspecialchars($property_type);
-                            if (!empty($type)) {
-                                echo "<option value='$type'>$type</option>";
-                            }
+                            echo "<option value='" . htmlspecialchars($property_type) . "'>" . htmlspecialchars($property_type) . "</option>";
                         }
                         ?>
                     </select>
                 </div>
-
 
                 <!-- Dynamic Property Type Selection -->
                 <!-- <select name="property_type"  class="form-control" required>
@@ -450,14 +438,15 @@ $bhk_result = $conn->query($bhk_query);
 
                 <div class="form-group inline-group">
 
-                    <div class="inline-item">
+                    <!-- <div class="inline-item">
                         <label for="rent">Rent:</label>
                         <input type="number" name="expected_rent" placeholder="Expected Rent" required>
                         <span>/month</span>
-                    </div>
+                    </div> -->
 
-                    <!-- <div class="inline-item">
+                    <div class="inline-item">
                         <label for="rent">Rent:</label>
+                        <!-- <input type="number" name="expected_rent" placeholder="Expected Rent" required> -->
                         <select name="expected_rent" required>
                             <option value="">Select Expected Rent</option>
                             <option value="5000-10000">5,000 - 10,000</option>
@@ -476,101 +465,16 @@ $bhk_result = $conn->query($bhk_query);
                             <option value="500000-above">500,000 - Above</option>
                         </select>
                         <span style="margin-right:20px;">/month</span>
-                    </div> -->
-
-                    <!-- <div class="inline-item">
-                        <label for="expected_rent">Rent:</label>
-                        <select name="expected_rent" required>
-                            <option value="">Select Expected Rent</option>
-                            <?php
-                            $sql_rent = "SELECT DISTINCT expected_rent_from, expected_rent_to FROM category WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL";
-                            $rent_result = $conn->query($sql_rent);
-                            if ($rent_result->num_rows > 0) {
-                                while ($row = $rent_result->fetch_assoc()) {
-                                    echo '<option value="' . $row['expected_rent_from'] . '-' . $row['expected_rent_to'] . '">'
-                                        . number_format($row['expected_rent_from']) . ' - ' . number_format($row['expected_rent_to']) . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                        <span style="margin-right:20px;">/month</span>
-                    </div> -->
-
-
-                    <!-- <div class="inline-item">
-                        <label for="expected_rent">Rent:</label>
-                        <select name="expected_rent" required>
-                            <option value="">Select Expected Rent</option>
-                            <?php
-                            // Fetch distinct rent ranges from the database (including commercial rent)
-                            $sql_rent = "
-                            SELECT DISTINCT expected_rent_from AS rent_from, expected_rent_to AS rent_to 
-                            FROM category 
-                            WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL
-                            UNION
-                            SELECT DISTINCT commercial_rent_from AS rent_from, commercial_rent_to AS rent_to 
-                            FROM category 
-                            WHERE commercial_rent_from IS NOT NULL AND commercial_rent_to IS NOT NULL
-                        ";
-                            $rent_result = $conn->query($sql_rent);
-
-                            if ($rent_result->num_rows > 0) {
-                                while ($row = $rent_result->fetch_assoc()) {
-                                    echo '<option value="' . $row['rent_from'] . '-' . $row['rent_to'] . '">'
-                                        . number_format($row['rent_from']) . ' - ' . number_format($row['rent_to']) . '</option>';
-                                }
-                            }
-                            ?>
-
-                        </select>
-                        <span style="margin-right:20px;">/month</span>
-                    </div> -->
-
-
-
-
-                    <!-- <div class="inline-item">
-                        <label for="expected_rent">Rent:</label>
-                        <select name="expected_rent" required>
-                            <option value="">Select Expected Rent</option>
-                            <?php
-                            // Fetch distinct rent ranges from the database (including commercial rent and deposit)
-                            $sql_rent_deposit = "
-                        SELECT DISTINCT expected_rent_from AS rent_from, expected_rent_to AS rent_to 
-                        FROM category 
-                        WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL
-                        UNION
-                        SELECT DISTINCT commercial_rent_from AS rent_from, commercial_rent_to AS rent_to 
-                        FROM category 
-                        WHERE commercial_rent_from IS NOT NULL AND commercial_rent_to IS NOT NULL
-                        UNION
-                        SELECT DISTINCT expected_deposit_from AS rent_from, expected_deposit_to AS rent_to 
-                        FROM category 
-                        WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL
-                        ";
-                            $rent_deposit_result = $conn->query($sql_rent_deposit);
-
-                            if ($rent_deposit_result->num_rows > 0) {
-                                while ($row = $rent_deposit_result->fetch_assoc()) {
-                                    echo '<option value="' . $row['rent_from'] . '-' . $row['rent_to'] . '">'
-                                        . number_format($row['rent_from']) . ' - ' . number_format($row['rent_to']) . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                        <span style="margin-right:20px;">/month</span>
-                    </div> -->
-
-
+                    </div>
 
                     <!-- <div class="inline-item">
                         <label for="deposit">Deposit:</label>
                         <input type="number" name="expected_deposit" placeholder="Expected Deposit" required>
                     </div> -->
 
-
-                    <!-- <div class="inline-item">
+                    <div class="inline-item">
                         <label for="expected_deposit">Deposit:</label>
+                        <!-- <input type="number" name="expected_deposit" placeholder="Expected Deposit" required> -->
                         <select name="expected_deposit" required>
                             <option value="">Select Expected Deposit</option>
                             <option value="3000000-3500000">30L - 35L</option>
@@ -594,31 +498,7 @@ $bhk_result = $conn->query($bhk_query);
                             <option value="40000000-50000000">4Cr - 5Cr</option>
                             <option value="50000000-above">5Cr - Above</option>
                         </select>
-                    </div> -->
-
-
-                    <div class="inline-item">
-                        <label for="deposit">Deposit:</label>
-                        <input type="text" name="expected_deposit" placeholder="Expected Deposit" required>
                     </div>
-
-                    <!-- <div class="inline-item">
-                        <label for="expected_deposit">Deposit:</label>
-                        <select name="expected_deposit" required>
-                            <option value="">Select Expected Deposit</option>
-                            <?php
-                            // Fetch distinct deposit ranges from the database
-                            $deposit_query = "SELECT DISTINCT expected_deposit_from, expected_deposit_to FROM category WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL";
-                            $deposit_result = $conn->query($deposit_query);
-                            if ($deposit_result->num_rows > 0) {
-                                while ($row = $deposit_result->fetch_assoc()) {
-                                    echo '<option value="' . $row['expected_deposit_from'] . '-' . $row['expected_deposit_to'] . '">'
-                                        . number_format($row['expected_deposit_from']) . ' - ' . number_format($row['expected_deposit_to']) . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div> -->
 
                 </div>
 
@@ -857,6 +737,7 @@ $bhk_result = $conn->query($bhk_query);
                                 <label class="form-check-label">Sofa</label>
                             </div>
 
+
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="Queen Size Bed"
                                     name="amenities[]">
@@ -875,11 +756,6 @@ $bhk_result = $conn->query($bhk_query);
                                 <label class="form-check-label">Cupboards</label>
                             </div>
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="utility"
-                                    name="amenities[]">
-                                <label class="form-check-label">Utility</label>
-                            </div>
 
                         </div>
 
@@ -928,11 +804,13 @@ $bhk_result = $conn->query($bhk_query);
                                 <label class="form-check-label">Shoe Rack</label>
                             </div>
 
+
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="Television"
                                     name="amenities[]">
                                 <label class="form-check-label">Television</label>
                             </div>
+
 
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="Washing Machine"

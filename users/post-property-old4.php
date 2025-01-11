@@ -450,11 +450,11 @@ $bhk_result = $conn->query($bhk_query);
 
                 <div class="form-group inline-group">
 
-                    <div class="inline-item">
+                    <!-- <div class="inline-item">
                         <label for="rent">Rent:</label>
                         <input type="number" name="expected_rent" placeholder="Expected Rent" required>
                         <span>/month</span>
-                    </div>
+                    </div> -->
 
                     <!-- <div class="inline-item">
                         <label for="rent">Rent:</label>
@@ -529,7 +529,7 @@ $bhk_result = $conn->query($bhk_query);
 
 
 
-                    <!-- <div class="inline-item">
+                    <div class="inline-item">
                         <label for="expected_rent">Rent:</label>
                         <select name="expected_rent" required>
                             <option value="">Select Expected Rent</option>
@@ -559,7 +559,7 @@ $bhk_result = $conn->query($bhk_query);
                             ?>
                         </select>
                         <span style="margin-right:20px;">/month</span>
-                    </div> -->
+                    </div>
 
 
 
