@@ -59,10 +59,13 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                     }
 
                     // Modify the SQL query to include a WHERE clause if a search query is provided
-                    $query = "SELECT * FROM customer_register";
+                    $query = "SELECT * FROM customer_register ";
                     if ($search_query !== '') {
                         $query .= " WHERE name LIKE '%$search_query%' OR phonenumber LIKE '%$search_query%' OR emailaddress LIKE '%$search_query%'";
                     }
+
+                    $query .= " ORDER BY date DESC";  // Assuming `date` is the field for registration date.
+
 
                     $res = mysqli_query($conn, $query);
                     if (mysqli_num_rows($res) > 0) {

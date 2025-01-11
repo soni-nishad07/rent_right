@@ -14,6 +14,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span>Dashboard</span>
                 </a>
             </li>
+            
+            <li class="treeview <?php echo ($current_page == 'category.php') ? 'active' : ''; ?>">
+                <a href="category">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Category</span>
+                </a>
+            </li>
 
             <li class="treeview <?php echo ($current_page == 'Customer_details.php') ? 'active' : ''; ?>">
                 <a href="Customer_details">
@@ -44,7 +51,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <li class="treeview <?php echo ($current_page == 'Contact_detail.php') ? 'active' : ''; ?>">
                 <a href="Contact_detail">
                 <i class="fa fa-phone"></i>
-                    <span>Contact details</span>
+                    <span>Inquiry Form</span>
                 </a>
             </li>
 
@@ -55,19 +62,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
 
-            <li class="treeview <?php echo ($current_page == 'Invoice.php') ? 'active' : ''; ?>">
+            <!-- <li class="treeview <?php echo ($current_page == 'Invoice.php') ? 'active' : ''; ?>">
                 <a href="Invoice">
                     <i class="fa fa-shopping-cart"></i>
                     <span>Invoice Generation</span>
                 </a>
-            </li>
+            </li> -->
 
-            <li class="treeview <?php echo ($current_page == 'footer.php') ? 'active' : ''; ?>">
+            <!-- <li class="treeview <?php echo ($current_page == 'footer.php') ? 'active' : ''; ?>">
                 <a href="footer">
                     <i class="fa fa-gear"></i>
                     <span>Footer</span>
                 </a>
-            </li>
+            </li> -->
 
         </ul>
     </div>

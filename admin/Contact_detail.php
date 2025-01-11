@@ -69,6 +69,9 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
                                         OR message LIKE '%$search_query%'";
                         }
 
+                        $query .= " ORDER BY created_at DESC";  // Assuming `created_at` is the field for registration date.
+
+
                         $res = mysqli_query($conn, $query);
 
                         if (mysqli_num_rows($res) > 0) {
