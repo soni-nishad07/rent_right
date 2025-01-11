@@ -1,9 +1,3 @@
-
-<?php
-include('user_block_check.php');
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,23 +47,6 @@ include('user_block_check.php');
         .sign_contact-button:hover {
             background-color: #0056b3;
         }
-
-
-
-
-        /* --------------------DROPDOWN------------------- */
-
-.commercial-dropdown
-{
-        /* position: absolute; */
-        inset: 0px auto auto 0px;
-    margin: 0px;
-    transform: translate3d(100.5px, 25px, 0px) !important;
-    display: block;
-}
-
-
-        
     </style>
 </head>
 
@@ -114,7 +91,7 @@ include('user_block_check.php');
                         <?php if (isset($_SESSION['user_name'])): ?>
                             <a class="nav-link" href="users/post-property"><b>Post Property</b></a>
                         <?php else: ?>
-                            <a class="nav-link" href="login"><b>Post Free Property</b></a>
+                            <a class="nav-link" href="login">Post Free Property</a>
                         <?php endif; ?>
                     </li>
                 </ul>
@@ -145,118 +122,81 @@ include('user_block_check.php');
             </div>
         </div>
     </nav>
-<!-- ------------------------- -->
 
 
+    <div class="container-fluid rent-head d-flex">
+        <!-- Rent Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-secondary1" type="button" onclick="window.location.href='index'">Rent</button>
+            <button class="btn btn-secondary1 dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden"></span>
+            </button>
+            <ul class="dropdown-menu" id="rent-dropdown">
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('1BHK')">1 BHK</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('2BHK')">2 BHK</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('3BHK')">3 BHK</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('4BHK')">4 BHK</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('5BHK')">5 BHK</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('IndependentHouse')">Independent House</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('1RK')">1 RK</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('CommercialSpace')">Commercial Space</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('Land')">Land</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('CompleteBuilding')">Complete Building</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('Bungalow')">Bungalow</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage('Villa')">Villa</button></li>
+            </ul>
+        </div>
 
+        <!-- Buy Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-secondary1" type="button" onclick="window.location.href='home'">Buy</button>
+            <button class="btn btn-secondary1 dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Flat')">Flat</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Building')">Building</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Site')">Site</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Commercial')">Commercial</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Villa')">Villa</button></li>
+            </ul>
+        </div>
 
+        <!-- Sale Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-secondary1" type="button" onclick="window.location.href='home1'">Commercial</button>
+            <button class="btn btn-secondary1 dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden"></span>
+            </button>
+            <!-- <ul class="dropdown-menu">
+            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Flat')">Flat</button></li>
+            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Building')">Building</button></li>
+            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Site')">Site</button></li>
+            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Commercial')">Commercial</button></li>
+            <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Villa')">Villa</button></li>
+        </ul> -->
+            <ul class="dropdown-menu">
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('Techpark')">Techpark</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('CommercialFloor')">Commercial Floor</button></li>
+                <li><button class="dropdown-item" type="button" onclick="redirectToPage2('CommercialBuilding')">Commercial Building</button></li>
+            </ul>
+        </div>
 
-<?php
-// Fetch distinct bhk_type options for Rent
-$bhk_query1 = "SELECT DISTINCT bhk_type FROM category WHERE bhk_type IS NOT NULL AND property_choose LIKE '%Rent%'";
-$bhk_result1 = $conn->query($bhk_query1);
-
-// Fetch distinct property types for Buy
-$buy_query = "SELECT DISTINCT property_type FROM category WHERE property_choose LIKE '%Buy%'";
-$buy_result = $conn->query($buy_query);
-
-// Fetch distinct property types for Commercial
-$commercial_query = "SELECT DISTINCT property_type FROM category WHERE property_choose LIKE '%Commercial%'";
-$commercial_result = $conn->query($commercial_query);
-?>
-
-<div class="container-fluid rent-head d-flex">
-    <!-- Rent Dropdown -->
-    <div class="dropdown">
-        <button class="btn btn-secondary1" type="button" onclick="window.location.href='index'">Rent</button>
-        <button class="btn btn-secondary1 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden"></span>
-        </button>
-        <ul class="dropdown-menu" id="rent-dropdown">
-            <?php
-            // Display BHK options for Rent
-            if ($bhk_result1->num_rows > 0) {
-                while ($row = $bhk_result1->fetch_assoc()) {
-                    $bhkType = htmlspecialchars($row['bhk_type']);
-                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToPage('$bhkType')\">$bhkType</button></li>";
-                }
-            } else {
-                echo "<li><span class='dropdown-item disabled'>No BHK options available</span></li>";
+        <!-- JavaScript for Dynamic Redirection -->
+        <script>
+            // Redirect based on BHK Type for Rent
+            function redirectToPage(bhkType) {
+                const normalizedBHK = bhkType.replace(/\s+/g, '').toUpperCase(); // Normalize text
+                window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
             }
-            ?>
-        </ul>
-    </div>
 
-    <!-- Buy Dropdown -->
-    <div class="dropdown">
-        <button class="btn btn-secondary1" type="button" onclick="window.location.href='home'">Buy</button>
-        <button class="btn btn-secondary1 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" id="buy-dropdown">
-            <?php
-            // Display property types for Buy
-            if ($buy_result->num_rows > 0) {
-                while ($row = $buy_result->fetch_assoc()) {
-                    $propertyType = htmlspecialchars($row['property_type']);
-                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToPage2('$propertyType')\">$propertyType</button></li>";
-                }
-            } else {
-                echo "<li><span class='dropdown-item disabled'>No property types available</span></li>";
+            // Redirect based on Property Type for Sale
+            function redirectToPage2(propertyType) {
+                const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase(); // Normalize text
+                window.location.href = `users/headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
             }
-            ?>
-        </ul>
+        </script>
     </div>
-
-    <!-- Commercial Dropdown -->
-    <div class="dropdown">
-        <button class="btn btn-secondary1" type="button" onclick="window.location.href='home1'">Commercial</button>
-        <button class="btn btn-secondary1 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" id="commercial-dropdown">
-            <?php
-            // Display property types for Commercial
-            if ($commercial_result->num_rows > 0) {
-                while ($row = $commercial_result->fetch_assoc()) {
-                    $propertyType = htmlspecialchars($row['property_type']);
-                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToPage3('$propertyType')\">$propertyType</button></li>";
-                }
-            } else {
-                echo "<li><span class='dropdown-item disabled'>No property types available</span></li>";
-            }
-            ?>
-        </ul>
-    </div>
-</div>
-
-
-
-
-
-
-    <!-- JavaScript for Dynamic Redirection -->
-    <script>
-        function redirectToPage(bhkType) {
-            const normalizedBHK = bhkType.replace(/\s+/g, '').toUpperCase();
-            // window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
-             window.location.href = `users/rent_headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
-        }
-
-        function redirectToPage2(propertyType) {
-            const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase();
-            window.location.href = `users/headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
-        }
-
-        
-        function redirectToPage3(propertyType) {
-            const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase();
-            window.location.href = `users/commercial_headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
-        }
-
-
-    </script>
-
 
 
     <script>

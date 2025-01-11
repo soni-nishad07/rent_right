@@ -46,10 +46,10 @@
         </div>
         <div class="footer-links">
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="About.php">About Us</a></li>
+                <li><a href="contact.php">Contact</a></li>
+                <!-- <li><a href="#">Privacy Policy</a></li> -->
             </ul>
         </div>
 

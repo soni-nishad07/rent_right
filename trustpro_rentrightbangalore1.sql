@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 11, 2025 at 12:10 PM
+-- Generation Time: Dec 16, 2024 at 11:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -91,80 +91,7 @@ INSERT INTO `bookings` (`id`, `booking_id`, `name`, `email`, `mobile`, `address`
 (1, 'booking_66bef69b66d274.17614131', 'Aditya', 'ravi@rpinfocare.com', '6361793287', 'SOmpura gate', 'cash', '2024-08-18', '2024-08-16', '1BHK', 'pending'),
 (10, 'booking_66b0c7d05239a2.09091392', 'sumit', 'soni@gmail.com', '9632587410', 'Ruskam bihar colony nadarganj, lko', 'cash', '2024-08-06', '2024-08-05', 'Exterior', 'Complete'),
 (12, 'booking_66bf96c0935d77.52761742', 'abc', 'abc@gmail.com', '9856321470', 'lko', 'cash', '2024-08-23', '2024-08-16', '3BHK', 'pending'),
-(14, 'booking_672b51c3457780.65837401', 'ritk', 'ritk@gmail.com', '8745632100', '', '', '2024-11-12', '2024-11-06', 'demoss', 'pending'),
-(16, 'booking_676415ea695767.36526128', 'abbbbb', 'ab@gmail.com', '9852036410', '', '', '0000-00-00', '2024-12-19', '2BHK', 'Complete'),
-(17, 'booking_676416aeb0d400.23486957', 'mekki', 'mikki@gmail.com', '9856321700', '', '', '0000-00-00', '2024-12-19', '2BHK', 'pending'),
-(18, 'booking_676a81933f7f94.04401296', 'munku', 'menku@gmail.com', '9874563210', '', '', '0000-00-00', '2024-12-24', '2BHK', 'pending'),
-(19, 'booking_677e5c1d126d20.42704290', 'jhbjh', 'mnjk@gmail.com', '9632587410', '', '', '0000-00-00', '2025-01-08', 'Carpenter', 'pending'),
-(20, 'booking_67822ddc2e7929.58394131', 'htht', 'aa@gmail.com', '8596321470', '', '', '0000-00-00', '2025-01-11', '4 BHK', 'pending'),
-(21, 'booking_67822e0b3c9592.92106473', 'hggh', 'aa@gmail.com', '8965741330', '', '', '0000-00-00', '2025-01-11', 'Fabrication', 'pending');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `category`
---
-
-CREATE TABLE `category` (
-  `id` int(11) NOT NULL,
-  `property_choose` varchar(255) NOT NULL,
-  `property_type` varchar(100) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `bhk_type` varchar(255) DEFAULT NULL,
-  `expected_rent_from` decimal(10,2) DEFAULT NULL,
-  `expected_rent_to` decimal(10,2) DEFAULT NULL,
-  `expected_deposit_from` decimal(10,2) DEFAULT NULL,
-  `expected_deposit_to` decimal(10,2) DEFAULT NULL,
-  `commercial_rent_from` decimal(10,2) NOT NULL,
-  `commercial_rent_to` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `category`
---
-
-INSERT INTO `category` (`id`, `property_choose`, `property_type`, `created_at`, `bhk_type`, `expected_rent_from`, `expected_rent_to`, `expected_deposit_from`, `expected_deposit_to`, `commercial_rent_from`, `commercial_rent_to`) VALUES
-(1, 'Rent', '', '2024-12-30 10:28:29', '1 BHK', 50000.00, 10000.00, NULL, NULL, 0.00, 0.00),
-(2, 'Rent', '', '2024-12-30 10:29:06', '2 BHK', 10000.00, 30000.00, NULL, NULL, 0.00, 0.00),
-(3, 'Rent', '', '2024-12-30 10:29:37', '3 BHK', 30000.00, 50000.00, NULL, NULL, 0.00, 0.00),
-(4, 'Rent', '', '2024-12-30 10:30:32', '4 BHK ', 50000.00, 100000.00, NULL, NULL, 0.00, 0.00),
-(5, 'Rent', '', '2024-12-30 10:31:10', '5 BHK', 100000.00, 150000.00, NULL, NULL, 0.00, 0.00),
-(6, 'Rent', '', '2024-12-30 10:31:45', '1 RK', 150000.00, 200000.00, NULL, NULL, 0.00, 0.00),
-(7, 'Buy', 'Flat', '2024-12-30 10:32:43', NULL, NULL, NULL, 300000.00, 400000.00, 0.00, 0.00),
-(8, 'Buy', 'Building', '2024-12-30 10:33:19', NULL, NULL, NULL, 400000.00, 450000.00, 0.00, 0.00),
-(9, 'Buy', 'Site', '2024-12-30 10:33:55', NULL, NULL, NULL, 450000.00, 500000.00, 0.00, 0.00),
-(10, 'Buy', 'Commercial', '2024-12-30 10:34:06', NULL, NULL, NULL, 500000.00, 550000.00, 0.00, 0.00),
-(11, 'Buy', 'Villa', '2024-12-30 10:34:26', NULL, NULL, NULL, 600000.00, 650000.00, 0.00, 0.00),
-(13, 'Commercial', 'Commercial Building Office Space	', '2024-12-30 10:35:22', NULL, NULL, NULL, 0.00, NULL, 0.00, 0.00),
-(14, 'Commercial', 'Retail Outlet Space	', '2024-12-30 10:35:48', NULL, NULL, NULL, NULL, NULL, 0.00, 0.00),
-(15, 'Commercial', 'Industrial Space	', '2024-12-30 10:36:08', NULL, NULL, NULL, NULL, NULL, 0.00, 0.00),
-(16, 'Commercial', 'Warehouse', '2024-12-30 10:36:27', NULL, NULL, NULL, NULL, NULL, 0.00, 0.00),
-(17, 'Commercial', 'Dark Store Space	', '2024-12-30 10:36:52', NULL, NULL, NULL, NULL, NULL, 0.00, 0.00),
-(18, 'Commercial', 'Co-Working Space	', '2024-12-30 10:37:13', NULL, NULL, NULL, NULL, NULL, 0.00, 0.00),
-(62, 'Commercial', 'Techpark Office Space', '2025-01-06 11:23:08', '', 0.00, 0.00, 0.00, 0.00, 300000.00, 500000.00);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `contact_messages`
---
-
-CREATE TABLE `contact_messages` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `mobile` varchar(15) NOT NULL,
-  `message` text NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `contact_messages`
---
-
-INSERT INTO `contact_messages` (`id`, `name`, `email`, `mobile`, `message`, `created_at`) VALUES
-(1, 'demo', 'demo@gmail.com', '7896541230', 'hloo hloo hloo', '2024-12-17 10:23:22'),
-(2, 'demo1', 'demo1@gmail.com', '7896541230', 'hloo hloo hloo', '2024-12-17 10:25:58');
+(14, 'booking_672b51c3457780.65837401', 'ritk', 'ritk@gmail.com', '8745632100', '', '', '2024-11-12', '2024-11-06', 'demoss', 'pending');
 
 -- --------------------------------------------------------
 
@@ -714,32 +641,51 @@ CREATE TABLE `customer_register` (
   `password` varchar(60) NOT NULL,
   `date` varchar(60) NOT NULL,
   `status` enum('active','blocked') DEFAULT 'active',
-  `user_unique_id` varchar(50) NOT NULL,
-  `session_id` varchar(255) DEFAULT NULL
+  `user_unique_id` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customer_register`
 --
 
-INSERT INTO `customer_register` (`id`, `name`, `emailaddress`, `phonenumber`, `password`, `date`, `status`, `user_unique_id`, `session_id`) VALUES
-(2, 'Test', 'Test@gmail.com', '2147483647', '$2y$10$mnEQe93vPqHg.BHdHW2QOuetSiH09GsiXY1ZPii4SawbtQbzCbc2e', '2024-07-31 08:16:43', 'active', 'user_66a9d6cb3dd965.62538091', NULL),
-(3, 'user', 'user@gmail.com', '7566666521', '$2y$10$WVgx7jVJucH.jnFVvEevm.Lr.hVwDNbo2Pw5BbghhZrZsxOqiMBWm', '2024-07-31 08:31:44', 'blocked', 'user_66a9da5093a2e2.66230031', NULL),
-(10, 'Aditya', 'aditya.k@designerstreet.in', '6361793287', '$2y$10$bPP0CQb1fITDc30AfvwrROFp9qNZE8J/cvnqhTr6TWXHwHGq567Ji', '2024-08-16 06:45:24', 'active', 'user_66bef584958351.77677943', NULL),
-(11, 'mahek', 'mahek@gmail.com', '8965231470', '$2y$10$ft1Q3MzQ5ECj2DazpxcoEOYFMcxLDZlvPgdA9OxVHSp0nOfqzv.3e', '2024-09-10 11:02:15', 'active', 'user_66e02737eec609.38794746', NULL),
-(12, 'a', 'a@gmail.com', '7596321480', '$2y$10$9Xb/LJ0pXuUMaRNa5933Necef6rW/yEorcF1TE4bqzUDKBSIvt0Le', '2024-09-23 07:20:38', 'active', 'user_66f116c628b715.78180594', NULL),
-(33, 'nihal pawar', 'nihalpawar673@gmail.com', '7259760252', '$2y$10$v1h/8clazQfCTiNPoiAPw.oT/3UYk.MFKchraeRClB3QX57jxE3f.', '2024-10-19 18:24:26', 'active', 'user_6713f95a688ad0.83103141', NULL),
-(34, 'Nischitha U', 'nischithau73@gmail.com', '9606124397', '$2y$10$AS38/wsxmRs7krElZhk3pu0lLM/onKy6CrqklnrVqLh5fjWA2OpsS', '2024-10-21 10:36:07', 'active', 'user_67162e97e98589.19526221', NULL),
-(35, 'Megha A', 'meghaa878909@gmail.com', '9080974535', '$2y$10$HVkPQo0TxatzrqDbpFZHCOP2.4GqbG18I2QEmSzvrVDi1qNEmyzV6', '2024-10-21 12:56:26', 'active', 'user_67164f7a167412.63357293', NULL),
-(36, 'sriyutha', 'sriyuthaprabha7@gmail.com', '9494439009', '$2y$10$O0nJWaoDUMUDNnwEljVQq.k1n0jlmqDcGz72HEDC/L5/8VK04MHaq', '2024-10-21 14:37:44', 'active', 'user_67166738860c29.99035311', NULL),
-(37, 'Anushree Nataraja', 'natarajanushree@gmail.com', '8762024463', '$2y$10$Hruc9.RJELWT72rQh0A58.q9Q.LZrjV68d2omBwFGLiFboYB7Tlvu', '2024-10-22 16:31:48', 'active', 'user_6717d3744719d0.06749685', NULL),
-(38, 'rutuja', 'rutujabammannavar4@gmail.com', '8197736408', '$2y$10$w7RI9Wu6R3gEhEFLFbkOv.lV48G1kDoS8r/LMjFjFlFXIwmyDGsGW', '2024-10-23 14:31:04', 'active', 'user_671908a8a24c33.14367883', NULL),
-(39, 'Suraj singh', 'Srjofficiall@gmail.com', '9798496800', '$2y$10$cuJemzwJIfNO.WJaMPNfi.0KQnN7cjXnF66Isvo0fm3UNrdCK48Ma', '2024-10-24 04:32:30', 'active', 'user_6719cdde878568.36577441', NULL),
-(40, 'Ayushi Panda', 'ayushipanda1308@gmail.com', '8618993947', '$2y$10$bLekVVC8VqYgvM6s3SF4V.rC9.sh.qNNpMLGrsv8hMv9tgQBgPq/.', '2024-10-24 05:02:55', 'active', 'user_6719d4ff64d915.47145616', NULL),
-(41, 'Ajith', 'sanjvenky98@gmal.com', '7358424665', '$2y$10$IM/XqTfwq/6TmCBDM5uYBOMPFuEvxVjHAn81WOPpq/1qZZ9jUpS.O', '2024-10-26 12:22:07', 'active', 'user_671cdeeff39306.41177449', NULL),
-(42, 'tenzin', 'woesert759@gmail.com', '6366122196', '$2y$10$ENTDjfEaPRv4W59v0.UVq.dzJO6Rp7.m8kdtSqLzRuQzEzwZu06VG', '2024-10-26 16:27:07', 'active', 'user_671d185b554114.70203918', NULL),
-(43, 'Neha Elsa Biju', 'elsabiju7@gmail.com', '9567081178', '$2y$10$Ne2XSOKnrjtZBdwo.GQO5ujQZLGd6SAO3UkeYPwVYVu6LbhgDMBkS', '2024-10-27 17:09:33', 'active', 'user_671e73cdc96f59.44714047', NULL),
-(44, 'Ann', 'anamikaprakash67@gmail.com', '7034421007', '$2y$10$URmEZ0fCQL9ftG7uytFGA.BgSiK.sMtRvRgwi5jDYDuVWe87O6OVW', '2024-11-01 06:40:51', 'active', 'user_672477f3e6cbc5.10155288', NULL);
+INSERT INTO `customer_register` (`id`, `name`, `emailaddress`, `phonenumber`, `password`, `date`, `status`, `user_unique_id`) VALUES
+(2, 'Test', 'Test@gmail.com', '2147483647', '$2y$10$mnEQe93vPqHg.BHdHW2QOuetSiH09GsiXY1ZPii4SawbtQbzCbc2e', '2024-07-31 08:16:43', 'active', 'user_66a9d6cb3dd965.62538091'),
+(3, 'user', 'user@gmail.com', '7566666521', '$2y$10$WVgx7jVJucH.jnFVvEevm.Lr.hVwDNbo2Pw5BbghhZrZsxOqiMBWm', '2024-07-31 08:31:44', 'active', 'user_66a9da5093a2e2.66230031'),
+(10, 'Aditya', 'aditya.k@designerstreet.in', '6361793287', '$2y$10$bPP0CQb1fITDc30AfvwrROFp9qNZE8J/cvnqhTr6TWXHwHGq567Ji', '2024-08-16 06:45:24', 'active', 'user_66bef584958351.77677943'),
+(11, 'mahek', 'mahek@gmail.com', '8965231470', '$2y$10$ft1Q3MzQ5ECj2DazpxcoEOYFMcxLDZlvPgdA9OxVHSp0nOfqzv.3e', '2024-09-10 11:02:15', 'active', 'user_66e02737eec609.38794746'),
+(12, 'a', 'a@gmail.com', '7596321480', '$2y$10$9Xb/LJ0pXuUMaRNa5933Necef6rW/yEorcF1TE4bqzUDKBSIvt0Le', '2024-09-23 07:20:38', 'active', 'user_66f116c628b715.78180594'),
+(13, 'MAHEBOOB RAHEMAN', 'maheboobraheman47@gmail.com', '8147444010', '$2y$10$eEprsv/buOet1bRW6AFSQuvMWZs9M0Wkmjz4fGTKGaubTpAjo3jvi', '2024-09-23 12:55:15', 'active', 'user_66f16533c8f5f0.15495519'),
+(14, 'Aman', 'aman091320cse@gmail.com', '9110134778', '$2y$10$3eRdzSz8f8XfyawnLFDDquJvt0G3B2oiZnTPoDhyMp3nV59puELTq', '2024-09-26 03:33:36', 'active', 'user_66f4d6104c4dc6.76200169'),
+(15, 'Megha vijay ', 'meghavijay01999@gmail.com', '9074738161', '$2y$10$jk3zqTsqJqNy/6re0ng4a.CeCz63P9H.0N3zWnDKJ35WLlHtKxEhe', '2024-09-26 11:31:20', 'active', 'user_66f5460879b469.55397974'),
+(16, 'Suraj J P', 'surajjp2508@gmail.com', '7829795717', '$2y$10$t9Hgywh6RMxAgd/ep3I1Lu.Vrz9QiUFbDxr91mD3B/mBgk96i8ywK', '2024-09-28 20:30:36', 'active', 'user_66f8676ccec6d2.88309355'),
+(17, 'Demo', 'demo@gmail.com', '8956234170', '$2y$10$Doli1ZqePi0ff0wOmIxX/.1yqJTZlVe396BTPve49KqkJmbxMJIgi', '2024-10-01 09:54:30', 'active', 'user_66fbc6d6a26002.40566536'),
+(18, 'Pritika', 'Vrspritika@gmail.com', '9500647034', '$2y$10$nI1hH5oP6RvZ62lXRbCNn.eggyUKJOQoZerIclkQYLc69iFweTZFC', '2024-10-02 06:04:47', 'active', 'user_66fce27f505c17.55938546'),
+(19, 'Madhav pandya', 'madhav.pandya999@gmail.com', '8128611554', '$2y$10$ifF0b3qUoAr9/l.rDAV1KOgtZHkJKFO4pYQXI0V0foUErped/zRiu', '2024-10-02 12:52:02', 'active', 'user_66fd41f208ead6.92512812'),
+(20, 'Monica M S', 'monicamadhu0709@gmail.com', '9952266244', '$2y$10$M3BOQZppD13S3Mf50eL6IuCuJdazbQK7q1t8GrncS9Afmj63HcKC2', '2024-10-02 22:15:47', 'active', 'user_66fdc61307bc13.03718843'),
+(21, 'Sheen Sabu', 'sheensabu111@gmail.com', '9562584239', '$2y$10$1hScitUjHyFstC3RHtkWs.FS0UuO8sFmO6xWwXee6PKi/.EDpnRuG', '2024-10-03 06:44:22', 'active', 'user_66fe3d46caa615.43834888'),
+(22, 'varun bn', 'varunappu721@gmail.com', '7795790079', '$2y$10$MXIPLiTfzetu1tq91hmZkurXqn0XOZ3AIAPzuxYQFV0.InRLIEWoa', '2024-10-03 09:39:24', 'active', 'user_66fe664c9e11d6.09577160'),
+(23, 'Rachana', 'nayakrachana28@gmail.com', '8088465191', '$2y$10$mfGVS3PzjRl8VtnSGYjTwO4Nu0KsVGCZaWHUSXTA6se90O4OBuxzO', '2024-10-03 15:43:42', 'active', 'user_66febbae1f5918.31172876'),
+(24, 'Tamilarasi ', 'chidambaram172000@gmail.com', '6381800157', '$2y$10$Zqvc37RiCM.O3.b0Sdu9CeI6iZGpCHHtxpb96w93gvkk7O8a0QT8a', '2024-10-06 21:41:06', 'active', 'user_670303f2309d91.41242903'),
+(25, 'Surya ', 'suryaananth188@gmail.com', '9080570485', '$2y$10$3VGG70mPvWIApPNFrNsnQu.WlDZ3bmo9.7oED.UozHi0yqjT9OTnq', '2024-10-09 15:29:12', 'active', 'user_6706a14802de71.13823061'),
+(26, 'Jaffar', 'jaffar8055@gmail.com', '8123707783', '$2y$10$gTIBaQwVf5Y4Qx2WnW3vau/bnD1TN/lQdascWbjNGTeOezCqmpAZS', '2024-10-15 07:39:01', 'active', 'user_670e1c15a1d478.68549657'),
+(27, 'K', 'Kevinant1811@gmail.com', '9843823305', '$2y$10$pvD.hw9jGW/FV/rVE/6vauk2AKF5INPqXFarpqwk16QpshqW/0o46', '2024-10-15 09:22:16', 'active', 'user_670e3448505bb7.42355541'),
+(28, 'sunaina ', 'Sunainarongpipi65@gmail.com', '8787687036', '$2y$10$IGWhZ26oBISfTwxI3q.2qOKISZUU.d0oYFR8gIPD6J5dWroiXpmnK', '2024-10-15 18:30:21', 'active', 'user_670eb4bd82c7a9.69600018'),
+(29, 'Diwakar Babu', 'nmdbabu@gmail.com', '9845685685', '$2y$10$MJBco6QwHjS.bNJYg3L36ejNm2ZlYVihMkKYMQ6FiIC1pfSqXR06K', '2024-10-17 12:14:43', 'active', 'user_6710ffb3540a81.48381549'),
+(30, 'Kushal Deb', 'deb.kushal96@gmail.com', '7575965172', '$2y$10$Ra2EQXa0M1.DQnc4gzbCpumAFZqWedHi4rQ3Mg6Lio5Gt9eWIM4V6', '2024-10-17 17:02:51', 'active', 'user_6711433b7b5898.53987857'),
+(31, 'Suchismita', 'suchismitadeblaskar@gmail.com', '8761894815', '$2y$10$DzrCTy7lZ9ppwTRMySErR.1QDSS3.MrcIhI.zadcE8gMo1wOXQhO2', '2024-10-18 20:39:07', 'active', 'user_6712c76b2ffa14.75213308'),
+(32, 'Ankit kumar Singh', 'ankit4mgospel@gmail.com', '07596823913', '$2y$10$AJolqyskoziiXa4rOtbYfOzuhcFGNahZulENCSbPCmdF3ly7j1Yzy', '2024-10-19 10:03:00', 'active', 'user_671383d4766b76.40375256'),
+(33, 'nihal pawar', 'nihalpawar673@gmail.com', '7259760252', '$2y$10$v1h/8clazQfCTiNPoiAPw.oT/3UYk.MFKchraeRClB3QX57jxE3f.', '2024-10-19 18:24:26', 'active', 'user_6713f95a688ad0.83103141'),
+(34, 'Nischitha U', 'nischithau73@gmail.com', '9606124397', '$2y$10$AS38/wsxmRs7krElZhk3pu0lLM/onKy6CrqklnrVqLh5fjWA2OpsS', '2024-10-21 10:36:07', 'active', 'user_67162e97e98589.19526221'),
+(35, 'Megha A', 'meghaa878909@gmail.com', '9080974535', '$2y$10$HVkPQo0TxatzrqDbpFZHCOP2.4GqbG18I2QEmSzvrVDi1qNEmyzV6', '2024-10-21 12:56:26', 'active', 'user_67164f7a167412.63357293'),
+(36, 'sriyutha', 'sriyuthaprabha7@gmail.com', '9494439009', '$2y$10$O0nJWaoDUMUDNnwEljVQq.k1n0jlmqDcGz72HEDC/L5/8VK04MHaq', '2024-10-21 14:37:44', 'active', 'user_67166738860c29.99035311'),
+(37, 'Anushree Nataraja', 'natarajanushree@gmail.com', '8762024463', '$2y$10$Hruc9.RJELWT72rQh0A58.q9Q.LZrjV68d2omBwFGLiFboYB7Tlvu', '2024-10-22 16:31:48', 'active', 'user_6717d3744719d0.06749685'),
+(38, 'rutuja', 'rutujabammannavar4@gmail.com', '8197736408', '$2y$10$w7RI9Wu6R3gEhEFLFbkOv.lV48G1kDoS8r/LMjFjFlFXIwmyDGsGW', '2024-10-23 14:31:04', 'active', 'user_671908a8a24c33.14367883'),
+(39, 'Suraj singh', 'Srjofficiall@gmail.com', '9798496800', '$2y$10$cuJemzwJIfNO.WJaMPNfi.0KQnN7cjXnF66Isvo0fm3UNrdCK48Ma', '2024-10-24 04:32:30', 'active', 'user_6719cdde878568.36577441'),
+(40, 'Ayushi Panda', 'ayushipanda1308@gmail.com', '8618993947', '$2y$10$bLekVVC8VqYgvM6s3SF4V.rC9.sh.qNNpMLGrsv8hMv9tgQBgPq/.', '2024-10-24 05:02:55', 'active', 'user_6719d4ff64d915.47145616'),
+(41, 'Ajith', 'sanjvenky98@gmal.com', '7358424665', '$2y$10$IM/XqTfwq/6TmCBDM5uYBOMPFuEvxVjHAn81WOPpq/1qZZ9jUpS.O', '2024-10-26 12:22:07', 'active', 'user_671cdeeff39306.41177449'),
+(42, 'tenzin', 'woesert759@gmail.com', '6366122196', '$2y$10$ENTDjfEaPRv4W59v0.UVq.dzJO6Rp7.m8kdtSqLzRuQzEzwZu06VG', '2024-10-26 16:27:07', 'active', 'user_671d185b554114.70203918'),
+(43, 'Neha Elsa Biju', 'elsabiju7@gmail.com', '9567081178', '$2y$10$Ne2XSOKnrjtZBdwo.GQO5ujQZLGd6SAO3UkeYPwVYVu6LbhgDMBkS', '2024-10-27 17:09:33', 'active', 'user_671e73cdc96f59.44714047'),
+(44, 'Ann', 'anamikaprakash67@gmail.com', '7034421007', '$2y$10$URmEZ0fCQL9ftG7uytFGA.BgSiK.sMtRvRgwi5jDYDuVWe87O6OVW', '2024-11-01 06:40:51', 'active', 'user_672477f3e6cbc5.10155288');
 
 -- --------------------------------------------------------
 
@@ -939,7 +885,13 @@ CREATE TABLE `properties` (
 --
 
 INSERT INTO `properties` (`id`, `bhk_type`, `property_type`, `build_up_area`, `property_age`, `floor`, `total_floor`, `area`, `city`, `state`, `available_for`, `expected_rent`, `expected_deposit`, `maintenance`, `available_from`, `preferred_tenants`, `furnishing`, `parking`, `description`, `bathrooms`, `balcony`, `water_supply`, `amenities`, `file_upload`, `availability`, `start_time`, `end_time`, `available_all`, `created_at`, `user_id`, `property_status`, `date`, `approval_status`, `owner_agent_type`) VALUES
-(19, '4 BHK', 'Commercial', 500, '5', 1, 1, 'Amausi, Lucknow, Uttar Pradesh, India', 'Amarkantak', 'Uttar Pradesh', 'Sale', '25000', '5000', 'Maintenance Included', '2025-01-25', 'Bachelor Female', 'Semi-Furnished', 'Two-Wheeler', 'for testing', 1, 1, 'Borewell', 'utility', '../uploads/home-bg.jpg,../uploads/images (2).jpeg,../uploads/images (1).jpeg,../uploads/luxury-pool-villa-spectacular-contemporary-design-digital-art-real-estate-home-house-property-ge.jpg,../uploads/e.jpg', 'Weekend (Sat-Sun)', '12:56:00', '12:57:00', 0, '2025-01-09 12:51:07', 3, 'Pending', '2025-01-09', 'Approved', 'Agent');
+(1, '2BHK', 'Flat', 2000, '5', 2, 5, 'Madhya Pradesh, India', 'Bhopal, Madhya Pradesh, India', 'Madhya Pradesh', 'Rent', '200.00', '200.00', 'Maintenance Included', '2024-09-12', 'Bachelor Female', 'Unfurnished', 'car', 'Some description here', 1, 1, 'Municipal', 'Gym,Visitor Parking', '../uploads/house-isolated-field.jpg,../uploads/luxury-pool-villa-spectacular-contemporary-design-digital-art-real-estate-home-house-property-ge.jpg', 'Weekday (Mon-Fri)', '00:00:00', '00:00:00', NULL, '2024-09-03 11:20:43', 2, 'Spotlight', '2024-09-03', 'Approved', 'Agent'),
+(2, '1BHK', 'Site', 2000, '2 years', 2, 4, 'Mumbai', 'Mumbai', 'Maharashtra', 'Only Lease', '5000.00', '10000-30000', 'Maintenance Included', '2024-07-04', 'Bachelor Female', 'Semi-Furnished', 'car', 'Some description here', 2, 2, 'Municipal', 'Gym, Power Backup, House Keeping, Club House', '../uploads/luxury-pool-villa-spectacular-contemporary-design-digital-art-real-estate-home-house-property-ge.jpg,../uploads/house-isolated-field.jpg', 'Weekday (Mon-Fri)', '11:48:00', '00:00:00', NULL, '2024-07-30 11:44:35', 1, 'Pending', '2024-07-31', 'Pending', ''),
+(3, '1Rk', 'Site', 5000, '5 years', 3, 8, 'Ahmedabad, Gujarat, India', 'Ahmedabad, Gujarat, India', 'Gujarat', 'Rent', '150000.00', '5000-10000', 'Maintenance Extra', '2024-08-08', 'Family,Bachelor Male', 'Semi-Furnished', 'both', 'Some description here', 1, 1, 'Both(Municipal+borwell)', 'Gym,Lift', '../uploads/1 (1).jpg', 'Weekday (Mon-Fri)', '00:00:00', '00:00:00', NULL, '2024-07-15 11:55:34', 2, 'Cancel', '2024-07-31', 'Rejected', 'Agent'),
+(4, '1RK', 'Building', 1000, '1', 2, 3, 'Lucknow, Uttar Pradesh, India', NULL, NULL, 'Sale', '2000.00', '5000-10000', 'Maintenance Included', '2024-11-20', 'Family', 'Unfurnished', 'Two-Wheeler', 'jhhjbvjhbjhbb  bkkbkb  kjbkbk  kjbkjbk', 1, 1, 'Municipal', 'Gym', '../uploads/home-bg.jpg,../uploads/pic-3.png,../uploads/pic-4.png,../uploads/pic-5.png,../uploads/pic-6.png,../uploads/step-1.png,../uploads/step-2.png,../uploads/step-3.png', 'Weekday (Mon-Fri)', '22:25:00', '20:30:00', 0, '2024-11-11 20:25:02', 3, 'Trending', '2024-11-11', 'Rejected', 'Owner'),
+(5, 'IndependentHouse', 'Site', 1000, '2', 2, 3, 'Delhi, India', 'Delhi, India', 'Uttar Pradesh', 'Rent', '1000.00', '150000-200000', 'Maintenance Extra', '2024-11-29', 'Family', 'Semi-Furnished', 'Four-Wheeler', 'ss ssss  sss q b cghll  iiofseweetryub jhjkjbv fddf', 1, 2, 'Borewell', 'Yoga Centre,Lift,Party Hall,Security,CCTV,Swimming Pool', '../uploads/images (2).jpeg,../uploads/images (1).jpeg,../uploads/images.jpeg', 'Weekend (Sat-Sun)', '13:56:00', '13:56:00', 0, '2024-11-16 13:51:18', 3, 'Featured', '2024-11-16', 'Approved', 'Owner'),
+(6, 'Bungalow', 'Villa', 500, '2', 4, 4, 'Kanpur, Uttar Pradesh, India', 'Kanpur', 'Uttar Pradesh', 'Sale', '2000.00', '300000-350000', 'Maintenance Included', '2024-11-30', 'Bachelor Female,Bachelor Male', 'Semi-Furnished', 'Four-Wheeler', 'hgfghhg  jhjh   hvjgg   hbhhv   jhbjh   jhbhjvh   jhbjhb   jhbjhb', 1, 1, 'Both (Municipal + Borewell)', 'Kids Play Area,Fire Safety,Garden Area,Yoga Centre,CCTV', '../uploads/images.jpeg', 'Everyday (Mon-Sun)', '19:19:00', '14:25:00', 0, '2024-11-16 14:19:18', 3, 'Sale and Commercial', '2024-11-16', 'Approved', 'Agent'),
+(7, '2BHK', 'Commercial', 500, '1', 2, 3, 'BTM Layout, Bengaluru, Karnataka, India', 'Bengaluru', 'Karnataka', 'Rent', '50000-100000', '5000-10000', 'Maintenance Included', '2025-01-02', 'Family', 'Semi-Furnished', 'Two-Wheeler', 'this is a projrct', 1, 1, 'Borewell', 'Lift,Visitor Parking,CCTV', '../uploads/images (3).jpeg,../uploads/images (2).jpeg', 'Weekday (Mon-Fri)', '01:11:00', '22:15:00', 0, '2024-12-09 22:11:13', 3, 'Pending', '2024-12-09', '', 'Agent');
 
 -- --------------------------------------------------------
 
@@ -1067,10 +1019,10 @@ INSERT INTO `services` (`id`, `service_img`, `service_name`, `service_descriptio
 (5, '66d1910b34131.png', 'Packers & Movers', ''),
 (7, '66d2c96d61caa.png', 'Electrician', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec blandit eros purus.'),
 (8, '66d2c99bc8234.png', 'Plumbing', 'demo Plumbing Plumbing'),
-(9, '66d2c9b34cbee.png', 'Fabrication', 'kjbhvgvhgv'),
+(9, '66d2c9b34cbee.png', 'Fabrication', ''),
 (10, '66d2c9cf97717.png', 'Carpenter', ''),
 (11, '66d2c9ede0c9a.png', 'Lift Service', ''),
-(12, '672b44402c11c.png', 'testdemo', 'tesing');
+(12, '672b44402c11c.png', 'demoss', 'deskjhkj');
 
 -- --------------------------------------------------------
 
@@ -1085,29 +1037,6 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users_bookings`
---
-
-CREATE TABLE `users_bookings` (
-  `booking_id` varchar(255) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `mobile` varchar(15) NOT NULL,
-  `submit_date` datetime NOT NULL,
-  `service_name` varchar(100) NOT NULL,
-  `booking_status` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `users_bookings`
---
-
-INSERT INTO `users_bookings` (`booking_id`, `name`, `email`, `mobile`, `submit_date`, `service_name`, `booking_status`) VALUES
-('booking_67641403c2cdf5.91225857', 'testtt', 'testt@gmail.com', '3214569870', '2024-12-19 13:39:31', 'Bungalow', 'pending');
 
 --
 -- Indexes for dumped tables
@@ -1129,18 +1058,6 @@ ALTER TABLE `bhk_searches`
 -- Indexes for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `category`
---
-ALTER TABLE `category`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `contact_messages`
---
-ALTER TABLE `contact_messages`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1257,12 +1174,6 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- Indexes for table `users_bookings`
---
-ALTER TABLE `users_bookings`
-  ADD PRIMARY KEY (`booking_id`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -1276,19 +1187,7 @@ ALTER TABLE `admin_register`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
-
---
--- AUTO_INCREMENT for table `category`
---
-ALTER TABLE `category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
-
---
--- AUTO_INCREMENT for table `contact_messages`
---
-ALTER TABLE `contact_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `customer_register`
@@ -1312,7 +1211,7 @@ ALTER TABLE `enquiry`
 -- AUTO_INCREMENT for table `properties`
 --
 ALTER TABLE `properties`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `saved_items`
@@ -1336,7 +1235,7 @@ ALTER TABLE `scheduled_visits`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables

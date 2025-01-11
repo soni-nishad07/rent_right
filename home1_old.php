@@ -3,22 +3,6 @@ session_start();
 include('connection.php');
 
 $is_logged_in = isset($_SESSION['user_id']);
-
-
-// Query to fetch commercial types
-$sql_commercial = "SELECT DISTINCT property_type FROM category WHERE property_choose LIKE '%Commercial%'";
-$commercial_type_result = $conn->query($sql_commercial);
-
-// Query to fetch rent range
-$sql_rent = "SELECT DISTINCT commercial_rent_from, commercial_rent_to FROM category WHERE property_choose LIKE '%Commercial%'";
-$rent_result = $conn->query($sql_rent);
-
-
-// $sql_rent = "SELECT DISTINCT commercial_rent_from, commercial_rent_to FROM category WHERE property_choose LIKE '%Rent%'";
-
-// Query to fetch commercial rent range from the database
-// $sql_commercial_rent = "SELECT DISTINCT commercial_rent_from, commercial_rent_to FROM category WHERE property_choose LIKE '%Commercial%'";
-// $commercial_rent_result = $conn->query($sql_commercial_rent);
 ?>
 
 
@@ -36,7 +20,7 @@ $rent_result = $conn->query($sql_rent);
     <script src="js/bootstrap.bundle.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYZ1bbPsyJVPfvc02P7eVyOymeDJw3Lis&libraries=places">
     </script>
-    <script>
+     <script>
         function initializeAutocomplete() {
             // Select the input field
             const input = document.getElementById('location-input');
@@ -46,9 +30,9 @@ $rent_result = $conn->query($sql_rent);
             // Optionally, restrict to a specific country or types
             // autocomplete.setComponentRestrictions({ country: ["us"] });
             // autocomplete.setTypes(['geocode']);
-
+            
             // Event listener for when a place is selected
-            autocomplete.addListener('place_changed', function() {
+            autocomplete.addListener('place_changed', function () {
                 const place = autocomplete.getPlace();
                 console.log("Selected place:", place);
             });
@@ -87,31 +71,80 @@ $rent_result = $conn->query($sql_rent);
         <div class="rent_boxs">
             <div class="rentbox">
 
+
                 <div class="dropdown">
-                    <button class="btn" type="button" onclick="location.href='home';" id="dropdownMenu2">
+                    <button class="btn  dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Buy
                     </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><button class="dropdown-item" type="button">Flat</button></li>
+                        <li><button class="dropdown-item" type="button">Building</button></li>
+                        <li><button class="dropdown-item" type="button">Site</button></li>
+                        <li><button class="dropdown-item" type="button">Commercial</button></li>
+                        <li><button class="dropdown-item" type="button">Villa</button></li>
+                    </ul>
                 </div>
 
+
                 <div class="dropdown">
-                    <button class="btn" type="button" onclick="location.href='index';" id="dropdownMenu2">
+                    <button class="btn dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Rent
                     </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <!-- <li><button class="dropdown-item" type="button">BHK Type</button></li> -->
+                        <li><button class="dropdown-item" type="button">1 BHK</button></li>
+                        <li><button class="dropdown-item" type="button">2 BHK</button></li>
+                        <li><button class="dropdown-item" type="button">3 BHK</button></li>
+                        <li><button class="dropdown-item" type="button">4 BHK</button></li>
+                        <li><button class="dropdown-item" type="button">5 BHK</button></li>
+                        <li><button class="dropdown-item" type="button">Independent House</button></li>
+                        <li><button class="dropdown-item" type="button">1 RK</button></li>
+                        <li><button class="dropdown-item" type="button">Commercial Space</button></li>
+                        <li><button class="dropdown-item" type="button">Land</button></li>
+                        <li><button class="dropdown-item" type="button">Complete Building</button></li>
+                        <li><button class="dropdown-item" type="button">Bungalow</button></li>
+                        <li><button class="dropdown-item" type="button">Villa</button></li>
+                    </ul>
                 </div>
 
+
                 <div class="dropdown">
-                    <button class="btn" type="button" onclick="location.href='home1';" id="dropdownMenu2">
+                    <button class="btn  dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown"
+                        aria-expanded="false">
                         Commercial
                     </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <!-- <li><button class="dropdown-item" type="button">Select Property Type</button></li> -->
+                        <li><button class="dropdown-item" type="button">Flat</button></li>
+                        <li><button class="dropdown-item" type="button">Building</button></li>
+                        <li><button class="dropdown-item" type="button">Site</button></li>
+                        <li><button class="dropdown-item" type="button">Commercial</button></li>
+                        <li><button class="dropdown-item" type="button">Villa</button></li>
+                    </ul>
                 </div>
 
             </div>
         </div>
 
 
-
         <div class="search-bar rent_search_bar">
             <h3>What Do you need?</h3>
+
+            <!-- <div class="search-options">
+                <a href="home">            
+                        <button class="search-option ">Location</button>
+                </a>
+                <a href="index">
+                <button class="search-option ">Category</button>
+                </a>
+
+                <a href="home1">
+                <button class="search-option active">Budget</button>
+                </a>
+            </div> -->
+
 
             <div class="search-options">
                 <button class="search-option">Location</button>
@@ -120,31 +153,52 @@ $rent_result = $conn->query($sql_rent);
             </div>
 
 
-            <form action="users/commercial_search_property.php" method="POST" class="search-form">
+            <form action="users/search_property.php" method="POST" class="search-form">
                 <input type="text" id="location-input" name="location" placeholder="Enter a location" required />
 
                 <select name="	property_type " required>
-                    <option value="">Select Commercial Type</option>
-                    <?php
-                    // Assuming $commercial_type_result contains the list of commercial types from the database
-                    if ($commercial_type_result->num_rows > 0) {
-                        while ($row = $commercial_type_result->fetch_assoc()) {
-                            echo "<option value='" . htmlspecialchars($row['property_type']) . "'>" . htmlspecialchars($row['property_type']) . "</option>";
-                        }
-                    }
-                    ?>
+                    <option value="">Property Type</option>
+                    <option>Flat</option>
+                    <option> Building </option>
+                    <option>Site</option>
+                    <option> Commercial</option>
+                    <option>Villa</option>
                 </select>
+
+                <!-- <select name="expected_deposit" required>
+                    <option value="">Select Expected Deposit</option>
+                    <option value="5000-10000">5,000 - 10,000</option>
+                    <option value="10000-30000">10,000 - 30,000</option>
+                    <option value="30000-50000">30,000 - 50,000</option>
+                    <option value="50000-100000">50,000 - 100,000</option>
+                    <option value="100000-150000">100,000 - 150,000</option>
+                    <option value="150000-200000">150,000 - 200,000</option>
+                    <option value="200000-250000">200,000 - 250,000</option>
+                    <option value="250000-300000">250,000 - 300,000</option>
+                    <option value="300000-350000">300,000 - 350,000</option>
+                    <option value="350000-400000">350,000 - 400,000</option>
+                    <option value="400000-450000">400,000 - 450,000</option>
+                    <option value="450000-480000">450,000 - 480,000</option>
+                    <option value="480000-500000">480,000 - 500,000</option>
+                    <option value="500000-above">500,000 - Above</option>
+                </select> -->
 
                 <select name="expected_rent" required>
                     <option value="">Select Expected Rent</option>
-                    <?php
-                    if ($rent_result->num_rows > 0) {
-                        while ($row = $rent_result->fetch_assoc()) {
-                            $rent_range = number_format($row['commercial_rent_from']) . " - " . number_format($row['commercial_rent_to']);
-                            echo "<option value='" . $rent_range . "'>" . $rent_range . "</option>";
-                        }
-                    }
-                    ?>
+                    <option value="5000-10000">5,000 - 10,000</option>
+                    <option value="10000-30000">10,000 - 30,000</option>
+                    <option value="30000-50000">30,000 - 50,000</option>
+                    <option value="50000-100000">50,000 - 100,000</option>
+                    <option value="100000-150000">100,000 - 150,000</option>
+                    <option value="150000-200000">150,000 - 200,000</option>
+                    <option value="200000-250000">200,000 - 250,000</option>
+                    <option value="250000-300000">250,000 - 300,000</option>
+                    <option value="300000-350000">300,000 - 350,000</option>
+                    <option value="350000-400000">350,000 - 400,000</option>
+                    <option value="400000-450000">400,000 - 450,000</option>
+                    <option value="450000-480000">450,000 - 480,000</option>
+                    <option value="480000-500000">480,000 - 500,000</option>
+                    <option value="500000-above">500,000 - Above</option>
                 </select>
 
                 <button type="submit" name="search" class="search-button">Search</button>
@@ -152,8 +206,6 @@ $rent_result = $conn->query($sql_rent);
         </div>
 
     </header>
-
-
 
 
     <section class="how-it-works">
@@ -190,7 +242,10 @@ $rent_result = $conn->query($sql_rent);
     </section>
 
 
-    <!-- ----------our services------------ -->
+   <!-- ----------our services------------ -->
+
+
+
 
     <section class="become_host">
         <div class="container">
@@ -579,24 +634,9 @@ $rent_result = $conn->query($sql_rent);
         ?>
 
 
-
         <!-- ---------featured collection ends----------- -->
 
 
-
-        <!-- JavaScript for Dynamic Redirection -->
-        <script>
-            function redirectToPage(bhkType) {
-                const normalizedBHK = bhkType.replace(/\s+/g, '').toUpperCase(); // Normalize text
-                window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
-            }
-
-            // Redirect based on Property Type for Sale
-            function redirectToPage2(propertyType) {
-                const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase(); // Normalize text
-                window.location.href = `users/headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
-            }
-        </script>
 
 
 
@@ -629,7 +669,6 @@ $rent_result = $conn->query($sql_rent);
                 </form>
             </div>
         </div>
-
 
         <script>
             // Modal handling
@@ -689,7 +728,6 @@ $rent_result = $conn->query($sql_rent);
         <?php include('footer.php'); ?>
 
         <script src="js/script.js"></script>
-
 
         <!-- spotlight -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

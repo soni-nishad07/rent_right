@@ -1,9 +1,3 @@
-
-<?php
-include('user_block_check.php');
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -114,7 +108,7 @@ include('user_block_check.php');
                         <?php if (isset($_SESSION['user_name'])): ?>
                             <a class="nav-link" href="users/post-property"><b>Post Property</b></a>
                         <?php else: ?>
-                            <a class="nav-link" href="login"><b>Post Free Property</b></a>
+                            <a class="nav-link" href="login">Post Free Property</a>
                         <?php endif; ?>
                     </li>
                 </ul>
@@ -170,7 +164,7 @@ $commercial_result = $conn->query($commercial_query);
     <div class="dropdown">
         <button class="btn btn-secondary1" type="button" onclick="window.location.href='index'">Rent</button>
         <button class="btn btn-secondary1 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden"></span>
+            <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu" id="rent-dropdown">
             <?php
@@ -178,7 +172,7 @@ $commercial_result = $conn->query($commercial_query);
             if ($bhk_result1->num_rows > 0) {
                 while ($row = $bhk_result1->fetch_assoc()) {
                     $bhkType = htmlspecialchars($row['bhk_type']);
-                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToPage('$bhkType')\">$bhkType</button></li>";
+                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToRent('$bhkType')\">$bhkType</button></li>";
                 }
             } else {
                 echo "<li><span class='dropdown-item disabled'>No BHK options available</span></li>";
@@ -199,7 +193,7 @@ $commercial_result = $conn->query($commercial_query);
             if ($buy_result->num_rows > 0) {
                 while ($row = $buy_result->fetch_assoc()) {
                     $propertyType = htmlspecialchars($row['property_type']);
-                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToPage2('$propertyType')\">$propertyType</button></li>";
+                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToBuy('$propertyType')\">$propertyType</button></li>";
                 }
             } else {
                 echo "<li><span class='dropdown-item disabled'>No property types available</span></li>";
@@ -220,7 +214,7 @@ $commercial_result = $conn->query($commercial_query);
             if ($commercial_result->num_rows > 0) {
                 while ($row = $commercial_result->fetch_assoc()) {
                     $propertyType = htmlspecialchars($row['property_type']);
-                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToPage3('$propertyType')\">$propertyType</button></li>";
+                    echo "<li><button class='dropdown-item' type='button' onclick=\"redirectToCommercial('$propertyType')\">$propertyType</button></li>";
                 }
             } else {
                 echo "<li><span class='dropdown-item disabled'>No property types available</span></li>";
@@ -230,7 +224,29 @@ $commercial_result = $conn->query($commercial_query);
     </div>
 </div>
 
+<!-- JavaScript for Dynamic Redirection -->
+<script>
+    // Redirect based on Rent Option
+    function redirectToRent(bhkType) {
+        const normalizedBhk = bhkType.replace(/\s+/g, '').toUpperCase();
+        // window.location.href = `users/propertyDetails.php?bhk_type=${normalizedBhk}&available_for=Rent`;
+        window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBhk}&available_for=Rent`;
+    }
 
+    // Redirect based on Buy Option
+    function redirectToBuy(buyType) {
+        const normalizedBuy = buyType.replace(/\s+/g, '').toUpperCase();
+        // window.location.href = `users/propertyDetails.php?buy_type=${normalizedBuy}&available_for=Buy`;
+             window.location.href = `users/headpropertyDetails.php?buy_type=${normalizedBuy}&available_for=Buy`;   
+    }
+
+    // Redirect based on Commercial Option
+    function redirectToCommercial(commercialType) {
+        const normalizedCommercial = commercialType.replace(/\s+/g, '').toUpperCase();
+        // window.location.href = `users/propertyDetails.php?commercial_type=${normalizedCommercial}&available_for=Commercial`;
+        window.location.href = `users/headpropertyDetails.php?commercial_type=${normalizedCommercial}&available_for=Commercial`;
+    }
+</script>
 
 
 
@@ -239,22 +255,13 @@ $commercial_result = $conn->query($commercial_query);
     <script>
         function redirectToPage(bhkType) {
             const normalizedBHK = bhkType.replace(/\s+/g, '').toUpperCase();
-            // window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
-             window.location.href = `users/rent_headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
+            window.location.href = `users/headpropertyDetails.php?bhk_type=${normalizedBHK}&available_for=Rent`;
         }
 
         function redirectToPage2(propertyType) {
             const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase();
             window.location.href = `users/headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
         }
-
-        
-        function redirectToPage3(propertyType) {
-            const normalizedProperty = propertyType.replace(/\s+/g, '').toUpperCase();
-            window.location.href = `users/commercial_headpropertyDetails.php?property_type=${normalizedProperty}&available_for=Sale`;
-        }
-
-
     </script>
 
 

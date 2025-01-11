@@ -96,26 +96,18 @@ $deposit_result = $conn->query($deposit_query);
                     }
                     ?>
                 </select>
-                
                 <!-- Expected Deposit Dropdown -->
-                            <select name="expected_deposit" required>
-                <option value="" disabled selected>Select Expected Price</option>
-                <?php
-                if ($deposit_result->num_rows > 0) {
-                    while ($row = $deposit_result->fetch_assoc()) {
-                        $deposit_from = (int)$row['expected_deposit_from'];
-                        $deposit_to = (int)$row['expected_deposit_to'];
-
-                        // Exclude invalid ranges like 0-0
-                        if ($deposit_from > 0 || $deposit_to > 0) {
-                            $deposit_range = number_format($deposit_from) . " - " . number_format($deposit_to);
+                <select name="expected_deposit" required>
+                    <option value="">Select Expected Price</option>
+                    <?php
+                    if ($deposit_result->num_rows > 0) {
+                        while ($row = $deposit_result->fetch_assoc()) {
+                            $deposit_range = number_format($row['expected_deposit_from']) . " - " . number_format($row['expected_deposit_to']);
                             echo "<option value='" . $deposit_range . "'>" . $deposit_range . "</option>";
                         }
                     }
-                }
-                ?>
-            </select>
-
+                    ?>
+                </select>
                 <button type="submit" name="search" class="search-button">Search</button>
             </form>
         </div>

@@ -47,17 +47,6 @@ if (isset($_POST['Login'])) {
 
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
-
-        // Check if user is blocked
-        if ($row['status'] === 'blocked') {
-            // Optionally delete the blocked user or just display a message
-            echo "<script>
-            alert('Your account is blocked. Please contact support.');
-            window.location.href = 'login';
-            </script>";
-            exit();
-        }
-
         if (password_verify($password, $row['password'])) {
             $_SESSION['user_id'] = $row['id'];
             $_SESSION['user_name'] = $row['name'];

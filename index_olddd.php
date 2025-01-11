@@ -4,18 +4,14 @@ include('connection.php');
 
 $is_logged_in = isset($_SESSION['user_id']);
 
+// Fetch distinct bhk_type options
+$bhk_query = "SELECT DISTINCT bhk_type FROM category WHERE bhk_type IS NOT NULL";
+$bhk_result = $conn->query($bhk_query);
 
-// Fetch distinct property types and deposit ranges for filtering
-$property_type_query = "SELECT DISTINCT property_type FROM category   WHERE property_choose LIKE '%Buy%' ";
-$property_type_result = $conn->query($property_type_query);
-
-// Fetch distinct price ranges for expected deposit
-$deposit_query = "SELECT DISTINCT expected_deposit_from, expected_deposit_to FROM category WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL";
-$deposit_result = $conn->query($deposit_query);
-
-
+// Fetch distinct price ranges for expected_rent
+$price_query = "SELECT DISTINCT expected_rent_from, expected_rent_to FROM category WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL";
+$price_result = $conn->query($price_query);
 ?>
-
 
 
 <!DOCTYPE html>
@@ -32,6 +28,7 @@ $deposit_result = $conn->query($deposit_query);
     <script src="js/bootstrap.bundle.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYZ1bbPsyJVPfvc02P7eVyOymeDJw3Lis&libraries=places">
     </script>
+
     <script>
         function initializeAutocomplete() {
             // Select the input field
@@ -53,10 +50,10 @@ $deposit_result = $conn->query($deposit_query);
         // Initialize the Autocomplete on page load
         window.onload = initializeAutocomplete;
     </script>
+
     <?php include('links.php'); ?>
+
 </head>
-
-
 
 
 <body>
@@ -65,61 +62,77 @@ $deposit_result = $conn->query($deposit_query);
     include('head.php');
     ?>
 
-    <header class="header" style="background: url('img/home2.png') center/cover no-repeat;">
-
+    <header class="header">
         <div class="header-content">
-            <h2>From Searching to Owning – Make It Yours Now</h2>
-            <p>Your Trusted Partner in Property Ownership!</p>
-            <a href="contact">
-                <button class="home_contact-button">Contact Us</button>
-            </a>
+            <h2>Making Home Rentals and Services Easy and Reliable</h2>
+            <p>From finding a home to maintaining it, we've got you covered.</p>
         </div>
 
         <div class="search-bar rent_search_bar">
             <h3>What Do you need?</h3>
-            <div class="search-options">
-                <button class="search-option">Location</button>
-                <button class="search-option ">Category</button>
-                <button class="search-option">Budget</button>
-            </div>
 
-            <!-- <form action="users/search_property.php" method="POST" class="search-form"> -->
-                        <form action="users/buy_search_property.php" method="POST" class="search-form">
+            <form action="users/rent_search_property.php" method="POST" class="search-form">
                 <input type="text" id="location-input" name="location" placeholder="Enter a location" required />
-                <select name="	property_type" required>
-                    <option value="">Property Type</option>
+
+                <select name="bhk_type" required>
+                    <!-- <option value="">BHK Type</option>
+                    <option value="1 BHK">1 BHK</option>
+                    <option value="2 BHK">2 BHK</option>
+                    <option value="3 BHK">3 BHK</option>
+                    <option value="4 BHK">4 BHK</option>
+                    <option value="5 BHK">5 BHK</option>
+                    <option value="Independent House">Independent House</option>
+                    <option value="1 RK">1 RK</option>
+                    <option value="Commercial Space">Commercial Space</option>
+                    <option value="Land">Land</option>
+                    <option value="Complete Building">Complete Building</option>
+                    <option value="Bungalow">Bungalow</option>
+                    <option value="Villa">Villa</option> -->
+                    <option value="">BHK Type</option>
                     <?php
-                    if ($property_type_result->num_rows > 0) {
-                        while ($row = $property_type_result->fetch_assoc()) {
-                            echo "<option value='" . htmlspecialchars($row['property_type']) . "'>" . htmlspecialchars($row['property_type']) . "</option>";
+                    if ($bhk_result->num_rows > 0) {
+                        while ($row = $bhk_result->fetch_assoc()) {
+                            echo "<option value='" . htmlspecialchars($row['bhk_type']) . "'>" . htmlspecialchars($row['bhk_type']) . "</option>";
                         }
                     }
                     ?>
                 </select>
-                
-                <!-- Expected Deposit Dropdown -->
-                            <select name="expected_deposit" required>
-                <option value="" disabled selected>Select Expected Price</option>
-                <?php
-                if ($deposit_result->num_rows > 0) {
-                    while ($row = $deposit_result->fetch_assoc()) {
-                        $deposit_from = (int)$row['expected_deposit_from'];
-                        $deposit_to = (int)$row['expected_deposit_to'];
 
-                        // Exclude invalid ranges like 0-0
-                        if ($deposit_from > 0 || $deposit_to > 0) {
-                            $deposit_range = number_format($deposit_from) . " - " . number_format($deposit_to);
-                            echo "<option value='" . $deposit_range . "'>" . $deposit_range . "</option>";
+                <select name="expected_rent" required>
+                    <!-- <option value="">Select Expected Rent</option>
+                    <option value="5000-10000">5,000 - 10,000</option>
+                    <option value="10000-30000">10,000 - 30,000</option>
+                    <option value="30000-50000">30,000 - 50,000</option>
+                    <option value="50000-100000">50,000 - 100,000</option>
+                    <option value="100000-150000">100,000 - 150,000</option>
+                    <option value="150000-200000">150,000 - 200,000</option>
+                    <option value="200000-250000">200,000 - 250,000</option>
+                    <option value="250000-300000">250,000 - 300,000</option>
+                    <option value="300000-350000">300,000 - 350,000</option>
+                    <option value="350000-400000">350,000 - 400,000</option>
+                    <option value="400000-450000">400,000 - 450,000</option>
+                    <option value="450000-480000">450,000 - 480,000</option>
+                    <option value="480000-500000">480,000 - 500,000</option>
+                    <option value="500000-above">500,000 - Above</option> -->
+                    <option value="">Select Expected Rent</option>
+                    <?php
+                    if ($price_result->num_rows > 0) {
+                        while ($row = $price_result->fetch_assoc()) {
+                            $price_range = number_format($row['expected_rent_from']) . " - " . number_format($row['expected_rent_to']);
+                            echo "<option value='" . $price_range . "'>" . $price_range . "</option>";
                         }
                     }
-                }
-                ?>
-            </select>
+                    ?>
+                </select>
 
                 <button type="submit" name="search" class="search-button">Search</button>
             </form>
-        </div>
 
+            <!-- Error message display area -->
+            <div id="error-message" style="color: red; <?php if (empty($error_message)) echo 'display: none;' ?>">
+                <?php echo $error_message; ?>
+            </div>
+        </div>
     </header>
 
 
@@ -159,30 +172,47 @@ $deposit_result = $conn->query($deposit_query);
     </section>
 
 
+    <!-- ----------our services------------ -->
+    <!-- ----------our services------------ -->
 
 
 
-    <section class="become_host">
+    <div class="services-section1" id="our_service">
+        <h2 class="services-title1">Our Services</h2>
+        <p class="our-services-description">Rent Right Services offers hassle-free, professional property rental solutions, ensuring you find the <br> perfect home or investment with ease and confidence.</p>
         <div class="container">
-            <div class="banner">
-                <div class="bnner_overlay">
-                    <div class="banner_content">
-                        <h1>Become a Host</h1>
-                        <p>Join thousands of Landlords <br> and earn an extra income.</p>
-                        <a href="users/property">
-                            <button>Learn More</button>
-                        </a>
-                    </div>
-                </div>
+
+            <div class="services-grid1">
+                <?php
+                $query = "SELECT * FROM services";
+                $res = mysqli_query($conn, $query);
+
+                if (mysqli_num_rows($res) > 0) {
+                    while ($row = mysqli_fetch_assoc($res)) {
+                        $service_name = htmlspecialchars($row['service_name']);
+                        $image_src = htmlspecialchars($row['service_img']);
+                        $service_desc = htmlspecialchars($row['service_description']);
+                ?>
+                        <div class="service-item1" onclick="openModal('<?php echo $service_name; ?>', '<?php echo $image_src; ?>')">
+                            <div class="service_icon1">
+                                <img src="uploads/services/<?php echo $image_src; ?>" alt="<?php echo $service_name; ?>" class="service-img">
+                            </div>
+                            <div class="service_content">
+                                <h3 class="service-title1"><?php echo $service_name; ?></h3>
+                                <p class="service-description1"><?php echo $service_desc; ?></p>
+                            </div>
+                        </div>
+                <?php
+                    }
+                }
+                ?>
             </div>
+
         </div>
-    </section>
+
+    </div>
 
 
-
-
-
-    <!-- ----------------------property based on selected------------------- -->
 
 
 
@@ -190,9 +220,12 @@ $deposit_result = $conn->query($deposit_query);
 
     <?php
     // $spotlightQuery = "SELECT * FROM properties WHERE property_status = 'Spotlight' LIMIT 1";
-    $spotlightQuery = "SELECT * FROM properties WHERE FIND_IN_SET('Sale', available_for)  AND property_status = 'Spotlight'    AND approval_status = 'Approved' 
-    LIMIT 1";
+    // $result = mysqli_query($conn, $spotlightQuery);
+
+    $spotlightQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Rent', available_for)  AND property_status = 'Spotlight'    AND approval_status = 'Approved' 
+                                    LIMIT 1";
     $result = mysqli_query($conn, $spotlightQuery);
+
 
     // Check if there are any results
     if ($result && mysqli_num_rows($result) > 0) {
@@ -246,8 +279,7 @@ $deposit_result = $conn->query($deposit_query);
 
     <!-- ------Focus projects------- -->
     <?php
-    $focusQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Sale', available_for)  AND  property_status = 'Focus'    AND approval_status = 'Approved' 
-    LIMIT 2";
+    $focusQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Rent', available_for)  AND  property_status = 'Focus'    AND approval_status = 'Approved' LIMIT 2"; // Adjust LIMIT as needed
     $result = mysqli_query($conn, $focusQuery);
 
     // Check if there are any results
@@ -309,16 +341,20 @@ $deposit_result = $conn->query($deposit_query);
 
 
     <!-- Rental img -->
-    <!-- // Query to fetch trending properties -->
+
+
     <?php
-    $trendingQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Sale', available_for)  AND  approval_status = 'Approved' ORDER BY id DESC LIMIT 6";
+    // Query to fetch trending properties
+
+    // $trendingQuery = "SELECT * FROM properties  ORDER BY id DESC "; 
+    $trendingQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Rent', available_for)  AND  approval_status = 'Approved' ORDER BY id DESC  LIMIT 6";
     $trendingResult = mysqli_query($conn, $trendingQuery);
     if ($trendingResult && mysqli_num_rows($trendingResult) > 0) {
         $count = 0; // Initialize a counter
     ?>
         <section class="trending">
             <div class="container">
-                <h3 class="title-trending">Sale Project in <span>Bengaluru</span></h3>
+                <h2 class="title-trending">Rental Project in <span>Bengaluru</span></h2>
                 <p class="subtitle-trending">All Projects in Bengaluru</p>
                 <div class="grid">
                     <?php
@@ -374,7 +410,7 @@ $deposit_result = $conn->query($deposit_query);
 
     <!-- ------Sale & Commercial projects------- -->
     <?php
-    $focusQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Sale', available_for)  AND  property_status = 'Sale & Commercial'    AND approval_status = 'Approved' LIMIT 2";
+    $focusQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Rent', available_for)  AND  property_status = 'Sale & Commercial'  AND approval_status = 'Approved'  LIMIT 2"; // Adjust LIMIT as needed
     $result = mysqli_query($conn, $focusQuery);
 
     // Check if there are any results
@@ -435,30 +471,29 @@ $deposit_result = $conn->query($deposit_query);
 
 
 
-    <!-- -------------Trending projects----- -->
+
+
+
+    <!-- Trending Section -->
+    <!-- // Query to fetch properties available for rent -->
 
     <?php
-    // $saleQuery = "SELECT * FROM properties WHERE FIND_IN_SET('Sale', available_for) AND property_status = 'Trending' LIMIT 6";
-    $saleQuery = " SELECT * FROM properties 
-              WHERE FIND_IN_SET('Sale', available_for) 
-              AND property_status = 'Trending' 
-              AND approval_status = 'Approved' 
-              LIMIT 6";
-    $saleResult = mysqli_query($conn, $saleQuery);
+    $rentQuery = "SELECT * FROM properties WHERE FIND_IN_SET('Rent', available_for) AND property_status = 'Trending'    AND approval_status = 'Approved' LIMIT 6";
+    $rentResult = mysqli_query($conn, $rentQuery);
     // 
     ?>
 
-    <?php if ($saleResult && mysqli_num_rows($saleResult) > 0) { ?>
+    <?php if ($rentResult && mysqli_num_rows($rentResult) > 0) { ?>
         <section class="trending">
             <div class="container">
                 <h2 class="title-trending">Trending <span>Projects</span></h2>
-                <p class="subtitle-trending">Properties for Sale</p>
+                <p class="subtitle-trending">Properties for Rent</p>
 
                 <!-- Rent Properties Section -->
                 <!-- <h4 class="subtitle-category">Properties for Rent</h4> -->
                 <div class="grid">
                     <?php
-                    while ($row = mysqli_fetch_assoc($saleResult)) {
+                    while ($row = mysqli_fetch_assoc($rentResult)) {
                         $images = explode(',', $row['file_upload']);
                     ?>
                         <a href="users/property-results.php?id=<?php echo (int)$row['id']; ?>" class="card-link">
@@ -492,12 +527,16 @@ $deposit_result = $conn->query($deposit_query);
 
     <?php
     // Query to fetch 'Featured' properties
-    $featuredQuery = "SELECT * FROM properties  WHERE FIND_IN_SET('Sale', available_for)  AND  property_status = 'Featured'    AND approval_status = 'Approved'  LIMIT 6"; // Adjust LIMIT as needed
+    // $featuredQuery = "SELECT * FROM properties WHERE property_status = 'Featured' LIMIT 6";
+    $featuredQuery = "SELECT * FROM properties WHERE FIND_IN_SET('Rent', available_for)  AND property_status = 'Featured'    AND approval_status = 'Approved'  LIMIT 6";
+    // Adjust LIMIT as needed
     $result = mysqli_query($conn, $featuredQuery);
-    $hasProperties = false; // Flag to check if there are properties
+    $hasProperties = false;
+    // Flag to check if there are properties
 
     if ($result && mysqli_num_rows($result) > 0) {
-        $hasProperties = true; // Set flag to true if there are properties
+        $hasProperties = true;
+        // Set flag to true if there are properties
     ?>
 
         <section class="featured-collections">
@@ -544,11 +583,6 @@ $deposit_result = $conn->query($deposit_query);
     ?>
 
 
-    <!-- featured collections end -->
-
-
-
-
 
 
     <!-- Modal for Booking Form -->
@@ -570,17 +604,16 @@ $deposit_result = $conn->query($deposit_query);
                 <div class="input-group">
                     <input type="number" id="mobile" name="mobile" placeholder="Mobile Number" required>
                 </div>
-                <div class="input-group">
+                <!-- <div class="input-group">
                     <input type="date" id="booking_date" name="booking_date" required>
-                </div>
+                </div> -->
                 <div class="input-group">
-                    <!-- <span>Provide Date For Booking!</span> -->
+                    <span>Provide Date For Booking!</span>
                 </div>
                 <button type="submit" name="book-visit" class="book-visit">Schedule a Visit</button>
             </form>
         </div>
     </div>
-
 
     <script>
         // Modal handling
@@ -606,9 +639,9 @@ $deposit_result = $conn->query($deposit_query);
             var name = document.getElementById("name").value;
             var email = document.getElementById("email").value;
             var mobile = document.getElementById("mobile").value;
-            var date = document.getElementById("booking_date").value;
+            // var date = document.getElementById("booking_date").value;
 
-            if (name === "" || email === "" || mobile === "" || date === "") {
+            if (name === "" || email === "" || mobile === "") {
                 alert("All fields must be filled out");
                 return false;
             }
@@ -636,19 +669,26 @@ $deposit_result = $conn->query($deposit_query);
 
 
 
+
+
+
+
     <!-- footer start  -->
     <?php include('footer.php'); ?>
 
     <script src="js/script.js"></script>
 
-    <!-- spotlight -->
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
+    <!-- ---------------- Spotlight ------------------------>
     <script>
         document.querySelectorAll('.thumbnail-carousel img').forEach((thumbnail, index) => {
             thumbnail.addEventListener('click', function() {
                 const mainImage = document.querySelector('.project-image img');
-                mainImage.src = this.src; // Set the main image to the clicked thumbnail
+                mainImage.src = this.src;
+                // Set the main image to the clicked thumbnail
             });
         });
         const sliderWrapper = document.querySelector('.slider-wrapper');
@@ -656,13 +696,15 @@ $deposit_result = $conn->query($deposit_query);
         const leftArrow = document.querySelector('.arrow-btn.left');
         const rightArrow = document.querySelector('.arrow-btn.right');
         let currentIndex = 0;
-        const cardWidth = 320; // Adjust based on the card's width + margin
+        const cardWidth = 320;
+        // Adjust based on the card's width + margin
         function updateSliderPosition() {
             const newTransformValue = `translateX(-${currentIndex * cardWidth}px)`;
             collectionsGrid.style.transform = newTransformValue;
         }
         rightArrow.addEventListener('click', () => {
-            const maxIndex = collectionsGrid.children.length - 3; // 3 items visible at a time
+            const maxIndex = collectionsGrid.children.length - 3;
+            // 3 items visible at a time
             if (currentIndex < maxIndex) {
                 currentIndex++;
                 updateSliderPosition();
@@ -672,6 +714,20 @@ $deposit_result = $conn->query($deposit_query);
             if (currentIndex > 0) {
                 currentIndex--;
                 updateSliderPosition();
+            }
+        });
+    </script>
+
+
+
+
+    <!-- // JavaScript to hide the error message after a few seconds  search result-->
+    <script>
+        $(document).ready(function() {
+            if ($('#error-message').text().trim() !== '') {
+                setTimeout(function() {
+                    $('#error-message').fadeOut('slow');
+                }, 3000); // 3000 milliseconds = 3 seconds
             }
         });
     </script>
