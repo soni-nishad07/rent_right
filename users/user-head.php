@@ -2,8 +2,11 @@
 <!-- ------------------------------------------------------------------------------------------- -->
  <!-- --------------------------------------------------------------------------- -->
 
-
  <?php
+
+
+$is_logged_in = isset($_SESSION['user_id']); // Check if user_id exists in the session
+
 
 
 if ($is_logged_in) {
@@ -89,7 +92,7 @@ if ($is_logged_in) {
                         <?php if (str_ends_with($current_url, $post_property_url)): ?>
                             <a class="nav-link" href="property"><b>Post Free Property</b></a>
                         <?php else: ?>
-                            <a class="nav-link" href="post-property"><b>Post Property</b></a>
+                            <a class="nav-link" href="post-property"><b>Post  Property</b></a>
                         <?php endif; ?>
                     <?php else: ?>
                         <a class="nav-link" href="../login"><b>Post Free Property</b></a>

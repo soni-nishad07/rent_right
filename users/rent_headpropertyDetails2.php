@@ -2,8 +2,11 @@
 session_start();
 include('../connection.php');
 
+$is_logged_in = isset($_SESSION['user_id']);
+
 // Sanitize function to prevent SQL Injection
-function sanitize($input) {
+function sanitize($input)
+{
     global $conn;
     return mysqli_real_escape_string($conn, trim($input));
 }
@@ -24,8 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location = isset($_POST['area']) ? sanitize($_POST['area']) : '';
     $city = isset($_POST['city']) ? sanitize($_POST['city']) : '';
     $state = isset($_POST['state']) ? sanitize($_POST['state']) : '';
+
     $bhkType = isset($_POST['bhk_type']) ? sanitize($_POST['bhk_type']) : '';
-    $priceRange = isset($_POST['expected_rent']) ? sanitize($_POST['expected_rent']) : '';
+
+    // $priceRange = isset($_POST['price_range']) ? sanitize($_POST['price_range']) : '';
+
+    $priceRange = isset($_POST[' expected_rent']) ? sanitize($_POST['expected_rent']) : '';
+
+
     $furnishing = isset($_POST['furnishing']) ? sanitize($_POST['furnishing']) : '';
     $propertyType = isset($_POST['property_type']) ? sanitize($_POST['property_type']) : '';
 
@@ -71,51 +80,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get and sanitize URL parameters for filtering
-$bhk_type = isset($_GET['bhk_type']) ? sanitize($_GET['bhk_type']) : '';
-$property_type = isset($_GET['property_type']) ? sanitize($_GET['property_type']) : '';
-$available_for = isset($_GET['available_for']) ? sanitize($_GET['available_for']) : '';
+// Fetch query parameters
+$bhk_type = isset($_GET['bhk_type']) ? strtoupper(trim($_GET['bhk_type'])) : null;
+$property_type = isset($_GET['property_type']) ? strtoupper(trim($_GET['property_type'])) : null;
+$available_for = isset($_GET['available_for']) ? strtoupper(trim($_GET['available_for'])) : null;
 
 // Initialize the SQL query
-$sql = "SELECT * FROM properties WHERE approval_status = 'Approved'";
+$sql = "SELECT * FROM properties WHERE available_for = ? AND approval_status = 'Approved'";
 
-// Add filters based on URL parameters
-if ($bhk_type) {
+// Add filters based on parameters
+if ($bhk_type && $available_for === 'RENT') {
     // Normalize bhk_type and user input by removing spaces
-    $sql .= " AND REPLACE(REPLACE(bhk_type, ' ', ''), '\t', '') = REPLACE(REPLACE('$bhk_type', ' ', ''), '\t', '')";
-}
-if ($property_type) {
+    $sql .= " AND REPLACE(REPLACE(UPPER(bhk_type), ' ', ''), '\t', '') = REPLACE(REPLACE(?, ' ', ''), '\t', '')";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $available_for, $bhk_type);
+} elseif ($property_type && $available_for === 'SALE') {
     // Normalize property_type and user input by removing spaces
-    $sql .= " AND REPLACE(REPLACE(property_type, ' ', ''), '\t', '') = REPLACE(REPLACE('$property_type', ' ', ''), '\t', '')";
-}
-if ($available_for) {
-    $sql .= " AND available_for = '$available_for'";
+    $sql .= " AND REPLACE(REPLACE(UPPER(property_type), ' ', ''), '\t', '') = REPLACE(REPLACE(?, ' ', ''), '\t', '')";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $available_for, $property_type);
+} else {
+    // Prepare the base query without additional filters
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $available_for);
 }
 
 // Execute the query
-$result = mysqli_query($conn, $sql);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($result && mysqli_num_rows($result) > 0) {
-    while ($row = mysqli_fetch_assoc($result)) {
+// Initialize an array to store properties
+$properties = [];
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
         $properties[] = $row;
     }
 } else {
     $error_message = "No properties found based on your search criteria.";
 }
 
-// Fetch and sanitize properties for detailed page
-if (isset($_GET['id'])) {
-    $property_id = sanitize($_GET['id']);
-    $stmt = $conn->prepare("SELECT * FROM properties WHERE id = ?");
-    $stmt->bind_param("i", $property_id);
-    $stmt->execute();
-    $property_result = $stmt->get_result();
-    $property_details = $property_result->fetch_assoc();
-    $stmt->close();
-}
-
+// Closing the statement
+$stmt->close();
 ?>
-
 
 
 <!DOCTYPE html>

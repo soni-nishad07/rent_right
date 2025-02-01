@@ -1,7 +1,6 @@
 <?php
-session_start();
-
 include('../connection.php');
+session_start();
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login');
@@ -439,50 +438,189 @@ $bhk_result = $conn->query($bhk_query);
                 <h2>Rental Details</h2>
 
                 <!-- Existing Rent and Deposit Fields -->
-          <!-- Existing Rent and Deposit Fields -->
                 <div class="form-group">
                     <label>Property Available For:</label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="available_for[]" value="Rent" id="rent-checkbox" onchange="toggleFields()">
-                        Rent
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="available_for[]" value="Sale" id="sale-checkbox" onchange="toggleFields()">
-                        Sale
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="available_for[]" value="Only Lease" id="lease-checkbox" onchange="toggleFields()">
-                        Only Lease
-                    </label>
+                    <label class="checkbox-label"><input type="checkbox" name="available_for[]" value="Rent">
+                        Rent</label>
+                    <label class="checkbox-label"><input type="checkbox" name="available_for[]" value="Sale">
+                        Sale</label>
+                    <label class="checkbox-label"><input type="checkbox" name="available_for[]" value="Only Lease"> Only
+                        Lease</label>
                 </div>
-                
-                <div id="rent-deposit-fields" class="form-group inline-group" style="display: none;">
+
+                <div class="form-group inline-group">
+
                     <div class="inline-item">
                         <label for="rent">Rent:</label>
-                        <input type="number" name="expected_rent" placeholder="Expected Rent">
+                        <input type="number" name="expected_rent" placeholder="Expected Rent" required>
                         <span>/month</span>
                     </div>
+
+                    <!-- <div class="inline-item">
+                        <label for="rent">Rent:</label>
+                        <select name="expected_rent" required>
+                            <option value="">Select Expected Rent</option>
+                            <option value="5000-10000">5,000 - 10,000</option>
+                            <option value="10000-30000">10,000 - 30,000</option>
+                            <option value="30000-50000">30,000 - 50,000</option>
+                            <option value="50000-100000">50,000 - 100,000</option>
+                            <option value="100000-150000">100,000 - 150,000</option>
+                            <option value="150000-200000">150,000 - 200,000</option>
+                            <option value="200000-250000">200,000 - 250,000</option>
+                            <option value="250000-300000">250,000 - 300,000</option>
+                            <option value="300000-350000">300,000 - 350,000</option>
+                            <option value="350000-400000">350,000 - 400,000</option>
+                            <option value="400000-450000">400,000 - 450,000</option>
+                            <option value="450000-480000">450,000 - 480,000</option>
+                            <option value="480000-500000">480,000 - 500,000</option>
+                            <option value="500000-above">500,000 - Above</option>
+                        </select>
+                        <span style="margin-right:20px;">/month</span>
+                    </div> -->
+
+                    <!-- <div class="inline-item">
+                        <label for="expected_rent">Rent:</label>
+                        <select name="expected_rent" required>
+                            <option value="">Select Expected Rent</option>
+                            <?php
+                            $sql_rent = "SELECT DISTINCT expected_rent_from, expected_rent_to FROM category WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL";
+                            $rent_result = $conn->query($sql_rent);
+                            if ($rent_result->num_rows > 0) {
+                                while ($row = $rent_result->fetch_assoc()) {
+                                    echo '<option value="' . $row['expected_rent_from'] . '-' . $row['expected_rent_to'] . '">'
+                                        . number_format($row['expected_rent_from']) . ' - ' . number_format($row['expected_rent_to']) . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                        <span style="margin-right:20px;">/month</span>
+                    </div> -->
+
+
+                    <!-- <div class="inline-item">
+                        <label for="expected_rent">Rent:</label>
+                        <select name="expected_rent" required>
+                            <option value="">Select Expected Rent</option>
+                            <?php
+                            // Fetch distinct rent ranges from the database (including commercial rent)
+                            $sql_rent = "
+                            SELECT DISTINCT expected_rent_from AS rent_from, expected_rent_to AS rent_to 
+                            FROM category 
+                            WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL
+                            UNION
+                            SELECT DISTINCT commercial_rent_from AS rent_from, commercial_rent_to AS rent_to 
+                            FROM category 
+                            WHERE commercial_rent_from IS NOT NULL AND commercial_rent_to IS NOT NULL
+                        ";
+                            $rent_result = $conn->query($sql_rent);
+
+                            if ($rent_result->num_rows > 0) {
+                                while ($row = $rent_result->fetch_assoc()) {
+                                    echo '<option value="' . $row['rent_from'] . '-' . $row['rent_to'] . '">'
+                                        . number_format($row['rent_from']) . ' - ' . number_format($row['rent_to']) . '</option>';
+                                }
+                            }
+                            ?>
+
+                        </select>
+                        <span style="margin-right:20px;">/month</span>
+                    </div> -->
+
+
+
+
+                    <!-- <div class="inline-item">
+                        <label for="expected_rent">Rent:</label>
+                        <select name="expected_rent" required>
+                            <option value="">Select Expected Rent</option>
+                            <?php
+                            // Fetch distinct rent ranges from the database (including commercial rent and deposit)
+                            $sql_rent_deposit = "
+                        SELECT DISTINCT expected_rent_from AS rent_from, expected_rent_to AS rent_to 
+                        FROM category 
+                        WHERE expected_rent_from IS NOT NULL AND expected_rent_to IS NOT NULL
+                        UNION
+                        SELECT DISTINCT commercial_rent_from AS rent_from, commercial_rent_to AS rent_to 
+                        FROM category 
+                        WHERE commercial_rent_from IS NOT NULL AND commercial_rent_to IS NOT NULL
+                        UNION
+                        SELECT DISTINCT expected_deposit_from AS rent_from, expected_deposit_to AS rent_to 
+                        FROM category 
+                        WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL
+                        ";
+                            $rent_deposit_result = $conn->query($sql_rent_deposit);
+
+                            if ($rent_deposit_result->num_rows > 0) {
+                                while ($row = $rent_deposit_result->fetch_assoc()) {
+                                    echo '<option value="' . $row['rent_from'] . '-' . $row['rent_to'] . '">'
+                                        . number_format($row['rent_from']) . ' - ' . number_format($row['rent_to']) . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                        <span style="margin-right:20px;">/month</span>
+                    </div> -->
+
+
+
+                    <!-- <div class="inline-item">
+                        <label for="deposit">Deposit:</label>
+                        <input type="number" name="expected_deposit" placeholder="Expected Deposit" required>
+                    </div> -->
+
+
+                    <!-- <div class="inline-item">
+                        <label for="expected_deposit">Deposit:</label>
+                        <select name="expected_deposit" required>
+                            <option value="">Select Expected Deposit</option>
+                            <option value="3000000-3500000">30L - 35L</option>
+                            <option value="3500000-4000000">35L - 40L</option>
+                            <option value="4000000-4500000">40L - 45L</option>
+                            <option value="4500000-5000000">45L - 50L</option>
+                            <option value="5000000-5500000">50L - 55L</option>
+                            <option value="5500000-6000000">55L - 60L</option>
+                            <option value="6000000-6500000">60L - 65L</option>
+                            <option value="6500000-7000000">65L - 70L</option>
+                            <option value="7000000-7500000">70L - 75L</option>
+                            <option value="7500000-8000000">75L - 80L</option>
+                            <option value="8000000-8500000">80L - 85L</option>
+                            <option value="8500000-9000000">85L - 90L</option>
+                            <option value="9000000-9500000">90L - 95L</option>
+                            <option value="9500000-10000000">95L - 1Cr</option>
+                            <option value="10000000-15000000">1Cr - 1.5Cr</option>
+                            <option value="15000000-20000000">1.5Cr - 2Cr</option>
+                            <option value="20000000-30000000">2Cr - 3Cr</option>
+                            <option value="30000000-40000000">3Cr - 4Cr</option>
+                            <option value="40000000-50000000">4Cr - 5Cr</option>
+                            <option value="50000000-above">5Cr - Above</option>
+                        </select>
+                    </div> -->
+
+
                     <div class="inline-item">
                         <label for="deposit">Deposit:</label>
-                        <input type="text" name="expected_deposit" placeholder="Expected Deposit">
+                        <input type="text" name="expected_deposit" placeholder="Expected Deposit" required>
                     </div>
-                </div>
-                
-                <div id="sale-fields" class="form-group" style="display: none;">
-                    <label for="price">Expected Price:</label>
-                    <input type="text" name="expected_price" placeholder="Expected Price">
-                         <!--<input type="number" name="expected_rent" placeholder="Expected Price">-->
-                </div>
-                
-                <div id="lease-fields" class="form-group" style="display: none;">
-                    <label for="lease">Expected Lease:</label>
-                    <input type="text" name="expected_lease" placeholder="Expected Lease">
-                    <!--<input type="number" name="expected_rent" placeholder="Expected Lease">-->
-                
-                </div>
 
+                    <!-- <div class="inline-item">
+                        <label for="expected_deposit">Deposit:</label>
+                        <select name="expected_deposit" required>
+                            <option value="">Select Expected Deposit</option>
+                            <?php
+                            // Fetch distinct deposit ranges from the database
+                            $deposit_query = "SELECT DISTINCT expected_deposit_from, expected_deposit_to FROM category WHERE expected_deposit_from IS NOT NULL AND expected_deposit_to IS NOT NULL";
+                            $deposit_result = $conn->query($deposit_query);
+                            if ($deposit_result->num_rows > 0) {
+                                while ($row = $deposit_result->fetch_assoc()) {
+                                    echo '<option value="' . $row['expected_deposit_from'] . '-' . $row['expected_deposit_to'] . '">'
+                                        . number_format($row['expected_deposit_from']) . ' - ' . number_format($row['expected_deposit_to']) . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div> -->
 
-
+                </div>
 
                 <!-- <div class="form-group inline-group">
                     <label class="checkbox-label">
@@ -495,7 +633,7 @@ $bhk_result = $conn->query($bhk_query);
 
                 <div class="form-group inline-group">
                     <label class="checkbox-label">
-                        <!-- <input type="radio" name="maintenance" value="Maintenance Included"> Maintenance Included -->
+                        <input type="radio" name="maintenance" value="Maintenance Included"> Maintenance Included
                     </label>
                     <label class="checkbox-label">
                         <input type="radio" name="maintenance" value="Maintenance Extra"> Maintenance Extra
@@ -669,14 +807,6 @@ $bhk_result = $conn->query($bhk_query);
 
 
                         <div class="chechboxs">
-                            
-                            
-                              <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="utility"
-                                    name="amenities[]">
-                                <label class="form-check-label">Utility</label>
-                            </div>
-                            
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="Lift" name="amenities[]">
                                 <label class="form-check-label">Lift</label>
@@ -745,7 +875,11 @@ $bhk_result = $conn->query($bhk_query);
                                 <label class="form-check-label">Cupboards</label>
                             </div>
 
-                          
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="utility"
+                                    name="amenities[]">
+                                <label class="form-check-label">Utility</label>
+                            </div>
 
                         </div>
 
@@ -920,38 +1054,7 @@ $bhk_result = $conn->query($bhk_query);
     });
 </script> -->
 
-<script>
-    function toggleFields() {
-        // Get checkboxes
-        const rentCheckbox = document.getElementById('rent-checkbox');
-        const saleCheckbox = document.getElementById('sale-checkbox');
-        const leaseCheckbox = document.getElementById('lease-checkbox');
 
-        // Get fields
-        const rentDepositFields = document.getElementById('rent-deposit-fields');
-        const saleFields = document.getElementById('sale-fields');
-        const leaseFields = document.getElementById('lease-fields');
-
-        // Toggle visibility
-        if (rentCheckbox.checked) {
-            rentDepositFields.style.display = 'block';
-        } else {
-            rentDepositFields.style.display = 'none';
-        }
-
-        if (saleCheckbox.checked) {
-            saleFields.style.display = 'block';
-        } else {
-            saleFields.style.display = 'none';
-        }
-
-        if (leaseCheckbox.checked) {
-            leaseFields.style.display = 'block';
-        } else {
-            leaseFields.style.display = 'none';
-        }
-    }
-</script>
 
 
     <script>
