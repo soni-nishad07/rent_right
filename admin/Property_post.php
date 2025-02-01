@@ -207,7 +207,7 @@ if (isset($_POST['update_approval'])) {
                                                 <th>Property Type</th>
                                                 <th>Phone Number</th>
                                                 <th>City</th>
-                                                <th>Rent</th>
+                                                <th>Rent / Sale / Lease</th>
                                                 <th>Deposit</th>
                                                 <th>Date</th>
                                                 <th>Top Project Status</th>
@@ -277,9 +277,13 @@ if (isset($_POST['update_approval'])) {
                                                 <td>
                                                     <?php echo $row['expected_rent']; ?>
                                                 </td>
-                                                <td>
+                                                <!-- <td>
                                                     <?php echo $row['expected_deposit']; ?>
-                                                </td>
+                                                </td> -->
+                                                <td>
+                                                <?php echo !empty($row['expected_deposit']) ? $row['expected_deposit'] : '--'; ?>
+                                            </td>
+
                                                 <td>
                                                     <?php echo $row['created_at']; ?>
                                                 </td>
