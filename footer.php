@@ -12,8 +12,8 @@
                             Bangalore, 560076.
                         </p>
                         <div class="calling">
-                <a href="tel:+919538865407">
-                            <i class="fas fa-phone"></i> +91-9538865407
+                <a href="tel:+919403891948 ">
+                            <i class="fas fa-phone"></i> +91-9403891948 
                         </a>
             </div>
             <!-- <div class="social-icons">
